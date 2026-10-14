@@ -1,0 +1,34 @@
+%% Source graph for units_flow.png (fec.md).
+%% Rebuild the PNG with: .venv/bin/python fec_figures/make_units_flow.py
+%% Mermaid will not typeset MathJax/KaTeX in Cursor's previews; formulas here are Unicode.
+flowchart TB
+  m["length<br/>metre  m"]
+  kg["mass<br/>kilogram  kg<br/>gram  g<br/>1 kg = 1000 g"]
+  s["time<br/>second  s"]
+  e["charge<br/>electron  e"]
+  N["how hard the shove<br/>newton  N<br/>N = kg·m/s²"]
+  J["how much work<br/>joule  J<br/>J = N·m<br/>J = kg·m²/s²"]
+  C["a pile of charge<br/>coulomb  C<br/>C ≈ 6.2×10¹⁸ e"]
+  W["work per second<br/>watt  W<br/>W = J/s"]
+  A["charge per second<br/>ampere  A<br/>A = C/s"]
+  V["push per coulomb<br/>volt  V<br/>V = J/C<br/>V = N·m/C<br/>V = W/A<br/>V = kg·m²/(A·s³)"]
+  T["how strong the track is<br/>tesla  T<br/>T = (V·s)/m²<br/>T = N/(A·m)<br/>T = kg/(A·s²)"]
+  Wb["field through an area<br/>weber  Wb<br/>Wb = V·s<br/>Wb = T·m²"]
+
+  kg --> N
+  m --> N
+  s --> N
+  N --> J
+  e --> C
+  C --> A
+  s --> A
+  J --> W
+  W --> V
+  A --> V
+  V --> T
+  T --> Wb
+
+  classDef raw fill:#d4edda,stroke:#3d8b40,color:#111
+  classDef derived fill:#fff4cc,stroke:#c4a035,color:#111
+  class m,kg,s,e raw
+  class N,J,A,W,C,V,T,Wb derived
