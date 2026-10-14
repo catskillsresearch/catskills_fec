@@ -22,6 +22,7 @@
 - [One-Shot Forward Physics Model](one-shot-forward.md)
 - [MAST Calibration of the One-Shot Model](mast-calibration.md)
 - [DIII-D Calibration of the One-Shot Model](diii-d-calibration.md)
+- [Differences in OSF Model Constants](kdiff.md)
 - [DIII-D Machine Learning Fit to Labelled Data](diii-d-fit.md)
 - [References](references.md)
 - [Appendix: 3rd Party Software](appendix-software.md)
