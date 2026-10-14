@@ -1,0 +1,4 @@
+# PyTorch neural-network baselines (optional — see README).
+# CUDA 13.2 wheel: Blackwell sm_120 (RTX 50-series). Driver 580.65+ / 13.2.
+--index-url https://download.pytorch.org/whl/cu132
+torch==2.13.0+cu132

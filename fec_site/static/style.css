@@ -1,0 +1,147 @@
+:root {
+  --bg: #f4f1ea;
+  --ink: #1c1b16;
+  --muted: #5c574c;
+  --line: #d4cfc2;
+  --btn: #1e3a4c;
+  --btn-ink: #f4f1ea;
+  --btn2: #3d5a3d;
+}
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 16px/1.45 "Source Sans 3", "Helvetica Neue", sans-serif;
+}
+main { max-width: 960px; margin: 0 auto; padding: 28px 20px 64px; }
+body.wide main { max-width: 1680px; }
+.psi-row { display: grid; grid-template-columns: 1fr 1fr 1fr 0.7fr; gap: 10px; }
+.psi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0 0 8px; }
+.psi-cell h2 { font-size: 15px; font-weight: 650; margin: 0 0 4px; }
+p.legend-line { color: var(--muted); font-size: 13px; margin: 0 0 18px; }
+#outputs, #cons, #inputs, #wall, #thom-core, #thom-edge, #thom-core-ne, #thom-edge-ne, #coils, #cohort-qb, #cohort-scatters, #jphi-efit, #jphi-pred, #psi-pinch, #psi-pca {
+  width: 100%;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  margin: 0 0 22px;
+}
+.psi-wrap { position: relative; }
+a { color: var(--btn); }
+nav.crumb { color: var(--muted); font-size: 14px; margin-bottom: 18px; }
+nav.crumb a { color: var(--muted); }
+h1 { font-size: 28px; font-weight: 650; margin: 0 0 8px; }
+p.lead { color: var(--muted); margin: 0 0 22px; }
+.buttons { display: flex; flex-wrap: wrap; gap: 12px; }
+.btn {
+  display: inline-block;
+  padding: 14px 22px;
+  background: var(--btn);
+  color: var(--btn-ink);
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 600;
+}
+.btn.alt { background: var(--btn2); }
+.btn.small { padding: 8px 12px; font-size: 14px; font-weight: 500; }
+.btn.ghost {
+  background: transparent;
+  color: var(--btn);
+  border: 1px solid var(--line);
+}
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+.search { display: flex; gap: 8px; margin: 0 0 18px; }
+.search input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font: inherit;
+  background: #fff;
+}
+.pager { margin-top: 18px; display: flex; gap: 10px; align-items: center; color: var(--muted); }
+.meta { color: var(--muted); font-size: 14px; margin-bottom: 16px; }
+#psi, #scalars { width: 100%; background: #fff; border: 1px solid var(--line); border-radius: 6px; margin: 12px 0; }
+#psi-wrap { position: relative; }
+#opoint {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  margin: -11px 0 0 -11px;
+  border: 2px solid #f7f7f7;
+  box-shadow: 0 0 0 1.5px #111;
+  border-radius: 50%;
+  background: transparent;
+  pointer-events: none;
+  display: none;
+  z-index: 3;
+}
+#psi-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+  overflow: visible;
+}
+#psi-overlay path.iso-lcfs {
+  fill: none;
+  stroke: #d4a017;
+  stroke-width: 2.2;
+}
+#psi-overlay path.iso-q95 {
+  fill: none;
+  stroke: #1a9a8c;
+  stroke-width: 1.8;
+}
+#psi-legend {
+  position: absolute;
+  top: 48px;
+  left: auto;
+  right: 140px;
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px 8px;
+  background: rgba(255,255,255,0.92);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font-size: 13px;
+  z-index: 3;
+}
+#psi-legend .leg { display: flex; align-items: center; gap: 8px; }
+#psi-legend .swatch {
+  display: inline-block;
+  width: 16px;
+  height: 10px;
+  flex: 0 0 16px;
+}
+#psi-legend .swatch.opoint {
+  width: 14px;
+  height: 14px;
+  border: 2px solid #f7f7f7;
+  box-shadow: 0 0 0 1.5px #111;
+  border-radius: 50%;
+}
+#psi-legend .swatch.lcfs { border-top: 2.2px solid #d4a017; height: 0; }
+#psi-legend .swatch.q95 { border-top: 1.8px solid #1a9a8c; height: 0; }
+table.score {
+  border-collapse: collapse;
+  margin: 0 0 16px;
+  font-size: 14px;
+  background: #fff;
+}
+table.score th, table.score td {
+  border: 1px solid var(--line);
+  padding: 6px 10px;
+}
+table.score th { text-align: left; }
+table.score td:nth-child(n+2), table.score th:nth-child(n+2) {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  min-width: 6.5em;
+}
+.controls { display: flex; gap: 10px; align-items: center; margin: 8px 0 16px; }
+input[type="range"] { flex: 1; }

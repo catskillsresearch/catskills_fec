@@ -1,0 +1,51 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+env/
+venv/
+ENV/
+
+# Development / IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Generated model weights, caches, and datasets (Stored on Lab Drive)
+results/
+cache/
+artifacts/
+outputs/
+data/
+*.pt
+*.pth
+*.npz
+!fusion_scoring/masks/*.npz
+*.parquet
+*.h5
+*.hdf5
+*.pkl
+*.bin
+
+# Competition submission archives & credentials
+submission/
+submissions/
+*.zip
+*.tar
+*.tar.gz
+manifest.json
+submission_pointer.zip
+direct_submission.zip
+
+# Runtime logs
+*.log
