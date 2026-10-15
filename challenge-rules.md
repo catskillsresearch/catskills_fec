@@ -78,6 +78,15 @@ Machine-specific pipelines are allowed: the DIII-D file and the MAST file may co
 
 **Compute ceiling (rebuild).** Training must be reproducible within **24 GPU-hours on a single 80 GB A100-class GPU**, or equivalent CPU time. Only **GPU** work counts toward that 24 hours. CPU-only data generation (for example a free-boundary solver) must be declared with hardware and wall-clock but is not capped; GPU time spent generating data does count. If the pipeline cannot fit the ceiling, say so in the package for a case-by-case check rather than automatic disqualification ([threads 2807](https://www.codabench.org/forums/17429/2807/), [2827](https://www.codabench.org/forums/17429/2827/)).
 
+### Catskills Compute Budget Declaration (Phase 2 Reproduction Package)
+In compliance with the 24 GPU-hour reproduction requirement for the top 5 entries:
+- **DIII-D Training (`train_fleet_full.py`)**: Wall-clock ~25 minutes on NVIDIA RTX 5060 Ti (~10 minutes on an 80 GB A100). Cumulative GPU compute: ~0.17 to 0.42 GPU-hours.
+- **DIII-D Dynamic Eddy Matrix (`fit_dynamic_weddy.py`)**: Wall-clock ~30 seconds on CPU (16 cores, 0 GPU-hours).
+- **MAST Electrodynamic Derivations (`catskills/derive_constants.py`)**: Wall-clock ~2 minutes on CPU (0 GPU-hours).
+- **Peak VRAM footprint**: ~13.0 GB (allocated via batch size 610,000 on PyTorch 2.x CUDA).
+- **Total Pipeline Wall-Clock**: Under 30 minutes total end-to-end (`./reproduce.sh`), well inside the 24 GPU-hour limit.
+
+
 **Still permitted on the MAST path, and often needed:** the shipped MAST inputs used without targets; per-machine normalization from inputs; MAST geometry, grids, wall, coils, unit conventions; other machines’ equilibria (disclosed); your own synthetic equilibria calibrated to MAST inputs only.
 
 **Coil-current units (authoritative statement, Data tab / dataset card).** Shaping-coil currents are **kA·turn** (DIII-D `F1A`–`F9B`, MAST `p{2-6}{l,u}`). Plasma current and DIII-D `ECOILA` / `bcoil`, MAST `sol` / `tf` / `efps` are **kA**. There is no `coil_turns` column. `sol_current` reads exactly **2×** the FAIR-MAST level-2 `pf_active` solenoid current; the organizers have not resolved which convention is correct — treat the factor as an open question if the solenoid is used quantitatively. `tf_current` and DIII-D `bcoil` have no poloidal rectangle. `efps_current` is a feed current at the P2 link board, not a coil ([thread 2807](https://www.codabench.org/forums/17429/2807/)).

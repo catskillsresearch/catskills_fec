@@ -182,3 +182,27 @@ This evaluates all 874 public test shots, packages them alongside the pinned MAS
 ./catskills/scripts/push_hf_submission.sh
 ```
 Upload the resulting `<attempt-dir>/submission_pointer.zip` directly to Codabench.
+
+---
+
+## Hardware & Compute Budget Declaration (Phase 2 Reproduction)
+
+Mandatory declaration for Phase 2 organizer rebuild under Rule 3 and the 24 GPU-hour budget:
+
+| Pipeline Component | Hardware Target | Wall-Clock Time | GPU-Hours | Peak VRAM Footprint |
+| :--- | :--- | :--- | :--- | :--- |
+| **DIII-D MultiHeadResMLP Training** (`train_fleet_full.py`) | NVIDIA RTX 5060 Ti (16 GB) / A100 (80 GB) | ~25 min (RTX 5060 Ti) / ~10 min (A100) | **0.17–0.42 GPU-hr** | **~13.0 GB** |
+| **DIII-D Dynamic Eddy Matrix** (`fit_dynamic_weddy.py`) | CPU (16 cores) | ~30 seconds | **0 GPU-hr** | Minimal (< 2 GB RAM) |
+| **MAST Electrodynamic Derivations** (`catskills/derive_constants.py`) | CPU (single core) | ~2 minutes | **0 GPU-hr** | Minimal (< 1 GB RAM) |
+| **End-to-End Turnkey Rebuild** (`./reproduce.sh`) | Single GPU workstation / A100 | **< 30 minutes total** | **< 0.5 GPU-hr** | **~13.0 GB** |
+
+**Budget Compliance**: The entire pipeline completes in under 30 minutes wall-clock (< 0.5 GPU-hours), well below the organizer ceiling of **24 GPU-hours on a single 80 GB A100**. Peak VRAM utilization is tuned to ~13.0 GB, fitting comfortably within standard 16 GB, 24 GB, 40 GB, and 80 GB accelerators.
+
+To execute the complete end-to-end retraining, derivation, packaging, and validation from scratch:
+```bash
+./reproduce.sh
+```
+Or run a fast smoke-test dry run:
+```bash
+./reproduce.sh --dry-run
+```
