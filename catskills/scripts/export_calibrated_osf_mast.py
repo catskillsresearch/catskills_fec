@@ -24,7 +24,13 @@ from pathlib import Path
 
 import numpy as np
 
-ROOT = Path(__file__).resolve().parents[2]
+if Path(__file__).resolve().parent.name == "scripts":
+    ROOT = Path(__file__).resolve().parents[2]
+elif Path(__file__).resolve().parent.name == "catskills":
+    ROOT = Path(__file__).resolve().parents[1]
+else:
+    ROOT = Path(__file__).resolve().parent
+
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "src"))
 
