@@ -138,6 +138,10 @@ def push_package(pkg_dir: Path) -> None:
 
 
 def main():
+    parser = argparse.ArgumentParser(description="Build and package midnight candidate submissions.")
+    parser.add_argument("--subs", type=int, nargs="+", default=None, help="Specific submission numbers to build (e.g. --subs 3 4)")
+    args = parser.parse_args()
+
     stamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
 
     configs = [
@@ -161,18 +165,18 @@ def main():
         },
         {
             "num": 3,
-            "name": f"1.9.0_MIDNIGHT_SUB3_scalarhead_beta115_{stamp}",
+            "name": f"1.9.0_MIDNIGHT_SUB3_pure_scalarhead_beta115_{stamp}",
             "d3d_type": "scalars_blended_080",
-            "d3d_desc": "0.8.0 Grand Master flux + 50/50 Blended DedicatedScalarNet (1.54M frames, R2_qb=0.99446)",
+            "d3d_desc": "0.8.0 Grand Master flux + 100% Pure DedicatedScalarNet (1.54M frames, R2_qb=0.9975)",
             "c_q": 1.062242,
             "s_beta": 1.1500,
             "mast_probe_role": "betaN Upper Bracket (s_beta = 1.15, c_q = 1.062242)",
         },
         {
             "num": 4,
-            "name": f"2.0.0_MIDNIGHT_SUB4_dz05_scalars_q100_{stamp}",
+            "name": f"2.0.0_MIDNIGHT_SUB4_dz05_pure_scalars_q100_{stamp}",
             "d3d_type": "shifted_dz05_scalars",
-            "d3d_desc": "0.8.0 Grand Master dZ=+0.5mm flux + 50/50 Blended DedicatedScalarNet",
+            "d3d_desc": "0.8.0 Grand Master dZ=+0.5mm flux + 100% Pure DedicatedScalarNet (Sol 4b, R2_qb=0.9975)",
             "c_q": 1.000000,
             "s_beta": 1.0000,
             "mast_probe_role": "q95 Lower Bracket on M9 flux (c_q = 1.0000, s_beta = 1.00)",
@@ -187,6 +191,9 @@ def main():
             "mast_probe_role": "q95 Upper Bracket on M9 flux (c_q = 1.1200, s_beta = 1.00)",
         },
     ]
+
+    if args.subs:
+        configs = [c for c in configs if c["num"] in args.subs]
 
     staged_pointers = []
 
@@ -210,9 +217,9 @@ def main():
             shutil.copyfile(D3D_DZ05_SHIFTED, d3d_out)
             d3d_sha = _sha256(d3d_out)
         elif cfg["d3d_type"] == "scalars_blended_080":
-            d3d_sha = inject_scalars_into_d3d(D3D_080_CHAMPION, d3d_out, blend_weight=0.5)
+            d3d_sha = inject_scalars_into_d3d(D3D_080_CHAMPION, d3d_out, blend_weight=1.0)
         elif cfg["d3d_type"] == "shifted_dz05_scalars":
-            d3d_sha = inject_scalars_into_d3d(D3D_DZ05_SHIFTED, d3d_out, blend_weight=0.5)
+            d3d_sha = inject_scalars_into_d3d(D3D_DZ05_SHIFTED, d3d_out, blend_weight=1.0)
         elif cfg["d3d_type"] == "osf_modal":
             shutil.copyfile(D3D_OSF_MODAL, d3d_out)
             d3d_sha = _sha256(d3d_out)
