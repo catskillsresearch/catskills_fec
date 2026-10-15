@@ -1,7 +1,4 @@
-"""Per-frame and per-shot diagnostics for the live MODEL_ID on the 3 labelled MAST shots.
-
-Lists: fec.md. LCFS / D / Consistency reuse fec_site.score.
-"""
+"""Per-frame and per-shot diagnostics for equilibrium reconstructions."""
 from __future__ import annotations
 
 import json
@@ -31,7 +28,6 @@ P_COILS = (
     "magnetics_p6u_current",
     "magnetics_efps_current",
 )
-STEMS = ("mast_shot_28348", "mast_shot_28350", "mast_shot_28351")
 
 
 def diag_path(pred_dir: Path, stem: str) -> Path:
@@ -383,107 +379,9 @@ def load_or_compute_diag(pred_dir: Path, stem: str, row: dict, pred: dict, score
                 machine="DIII-D",
                 axis_sign=-1.0,
                 coil_keys=coils,
-                sol_key="magnetics_ECOILA",
-                ip_time_key="magnetics_plasma_current_times",
-            ),
-        )
+            sol_key="magnetics_ECOILA",
+            ip_time_key="magnetics_plasma_current_times",
+        ),
+    )
     return _write(path, compute_shot_diag(row, pred, score, sign))
 
-
-def cohort_path(pred_dir: Path) -> Path:
-    return pred_dir / "validation_cohort.json"
-
-
-def compute_cohort_diag(rows: dict[str, dict], preds: dict[str, dict], scores: dict[str, dict]) -> dict:
-    scat = {k: {"efit": [], "pred": [], "shot": []} for k in list(CONS_SCALARS) + ["q95", "betaN"]}
-    traces = {}
-    flats = []
-    kept = []
-    residual_share = {}
-    for stem in STEMS:
-        if stem not in rows or stem not in preds or stem not in scores:
-            continue
-        kept.append(stem)
-        row, pred, score = rows[stem], preds[stem], scores[stem]
-        fr = score.get("frame") or {}
-        t = _as1(row["efit_times"])
-        q_e = [None if not np.isfinite(v) else float(v) for v in _as1(row.get("efit_q95"))]
-        q_p = [None if not np.isfinite(v) else float(v) for v in _as1(pred.get("q95"))]
-        b_e = [None if not np.isfinite(v) else float(v) for v in _as1(row.get("efit_beta_n"))]
-        b_p = [None if not np.isfinite(v) else float(v) for v in _as1(pred.get("betaN"))]
-        traces[stem] = {"t": t.tolist(), "q95_efit": q_e[: t.size], "q95_pred": q_p[: t.size], "betaN_efit": b_e[: t.size], "betaN_pred": b_p[: t.size]}
-        cons_e = fr.get("cons_efit") or {}
-        cons_p = fr.get("cons_pred") or {}
-        n = int(t.size)
-        for i in range(n):
-            for name in CONS_SCALARS:
-                ev = (cons_e.get(name) or [None] * n)[i] if i < len(cons_e.get(name) or []) else None
-                pv = (cons_p.get(name) or [None] * n)[i] if i < len(cons_p.get(name) or []) else None
-                scat[name]["efit"].append(ev)
-                scat[name]["pred"].append(pv)
-                scat[name]["shot"].append(stem)
-            scat["q95"]["efit"].append(q_e[i] if i < len(q_e) else None)
-            scat["q95"]["pred"].append(q_p[i] if i < len(q_p) else None)
-            scat["q95"]["shot"].append(stem)
-            scat["betaN"]["efit"].append(b_e[i] if i < len(b_e) else None)
-            scat["betaN"]["pred"].append(b_p[i] if i < len(b_p) else None)
-            scat["betaN"]["shot"].append(stem)
-        psi = np.asarray(row["efit_psirz"], dtype=np.float64).reshape(n, -1)
-        flats.append(psi)
-    if flats:
-        X = np.concatenate(flats, axis=0)
-        mean = X.mean(axis=0)
-        C = X - mean
-        _, s, vt = np.linalg.svd(C, full_matrices=False)
-        comps = vt[:PCA_K]
-        energy = s**2
-        tot = float(energy.sum()) or 1.0
-        share_kept = float(energy[:PCA_K].sum() / tot)
-        offset = 0
-        for stem, block in zip(kept, flats):
-            n = block.shape[0]
-            sl = C[offset : offset + n]
-            proj = sl @ comps.T @ comps
-            num = np.sum((sl - proj) ** 2, axis=1)
-            den = np.sum(sl**2, axis=1)
-            residual_share[stem] = [None if d <= 0 else float(a / d) for a, d in zip(num, den)]
-            offset += n
-        pca = {
-            "k": PCA_K,
-            "share_kept": share_kept,
-            "mean": np.round(mean, 6).tolist(),
-            "comps": np.round(comps, 6).tolist(),
-            "nR": int(np.asarray(rows[STEMS[0]]["efit_grid_R"]).reshape(-1).size),
-            "nZ": int(np.asarray(rows[STEMS[0]]["efit_grid_Z"]).reshape(-1).size),
-        }
-    else:
-        pca = {"k": 0, "share_kept": None, "mean": [], "comps": [], "nR": 0, "nZ": 0}
-    r2 = {}
-    for name, pack in scat.items():
-        a = np.array([np.nan if v is None else v for v in pack["pred"]], dtype=np.float64)
-        b = np.array([np.nan if v is None else v for v in pack["efit"]], dtype=np.float64)
-        keep = np.isfinite(a) & np.isfinite(b)
-        if keep.sum() < 2:
-            r2[name] = None
-            continue
-        bb = b[keep]
-        den = float(np.sum((bb - bb.mean()) ** 2))
-        r2[name] = None if den <= 0 else 1.0 - float(np.sum((a[keep] - bb) ** 2)) / den
-    return {
-        "v": DIAG_V,
-        "stems": [s for s in STEMS if s in traces],
-        "scatters": scat,
-        "r2": r2,
-        "traces": traces,
-        "residual_share": residual_share,
-        "pca": pca,
-    }
-
-
-def load_or_compute_cohort(pred_dir: Path, rows: dict, preds: dict, scores: dict) -> dict:
-    path = cohort_path(pred_dir)
-    if path.is_file():
-        pack = json.loads(path.read_text())
-        if pack.get("v") == DIAG_V:
-            return pack
-    return _write(path, compute_cohort_diag(rows, preds, scores))

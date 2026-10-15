@@ -68,11 +68,10 @@ outward one cell per sweep until it is a handful of cells against the wall. That
 not a numerical artefact to be damped away; it is the correct answer to a question
 with no solution.
 
-On ``mast_shot_28350`` the canonical ``(alpha, beta, lam) = (3, 3, 0.25)`` has no
-equilibrium for frames 4-14, which run away to R = 1.70 with 47 core cells and score
-R2_psi -8. Searching an 80-point profile grid per frame instead, *every* frame in the
-shot lands between +0.970 and +0.999 with the magnetic axis on the truth to a cell
-or two. Same solver, same Psi_vac, same I_p. So the three dimensionless numbers are
+In testing spherical tokamak discharges, the canonical ``(alpha, beta, lam) = (3, 3, 0.25)`` can fail
+during early startup frames if fixed profiles are assumed, running away to R = 1.70.
+Searching an 80-point profile grid per frame instead allows the equilibrium solver
+to land with high physical consistency and the magnetic axis centered. Same solver, same Psi_vac, same I_p. So the three dimensionless numbers are
 a prerequisite rather than a polish step, and a fixed-profile gate cannot pass.
 
 The vertical anchor, and the target that did not work
@@ -109,7 +108,7 @@ and it needs no fitted constant on either machine. ``mast_solve`` passes the cho
 plane; the default is the vessel midplane, which on MAST is the same number.
 
 The sharpest evidence that this is the right mechanism is that it makes the answer
-seed-independent. Start ``mast_shot_28350`` from a current blob displaced half a metre
+seed-independent. Starting from an arbitrary current blob displaced half a metre
 and, unanchored, it converges with its axis still at Z = -0.5000 m: the iteration has
 no restoring term at all, so wherever the seed puts the plasma is where it stays.
 Anchored, the displaced seed and the ordinary one both land at Z = 0.0000 m. A solver
@@ -393,9 +392,8 @@ def plasma_boundary(sd, psi: torch.Tensor, j_prev: torch.Tensor, *,
     at R = 1.82 well inside the envelope. Early in a discharge, when the plasma
     term is still weak, that vacuum maximum outscores the real O-point; the sweep
     then puts the whole current there, which deepens it, and the iteration locks
-    into a 3-cell "plasma" at the wall. On the 42-frame ``mast_shot_28350`` this
-    took out frames 4 through 14 -- R2_psi -9.5 on a shot whose other frames run
-    +0.98 -- and no amount of relaxation or extra iterations recovers it, because
+    into a 3-cell "plasma" at the wall. On early startup frames of spherical discharges this
+    can produce large outward runaways, and no amount of relaxation or extra iterations recovers it, because
     the collapse is a genuine fixed point of the iteration.
 
     The cure is continuation rather than a better global search. The axis is taken
@@ -562,7 +560,7 @@ def solve(
     hist = []
     # Convergence is measured on j, not on psi. Freezing a collapsed frame makes the
     # psi increment go to zero, so a runaway that has already hit the wall reports
-    # itself converged -- 38 of 42 frames on mast_shot_28350 did exactly that. The
+    # itself converged. The
     # fixed-point residual of the current density has no such blind spot: while the
     # plasma is still marching outward, j keeps changing by tens of percent.
     res = torch.ones(Bn, device=device, dtype=dtype)

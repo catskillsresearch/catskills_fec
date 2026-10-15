@@ -1,7 +1,4 @@
-"""fec.md, restricted to the 3 labelled MAST shots (a small Ψ) or one shot / frame.
-
-Formulas and NaN / LCFS drop rules are the Restriction table and the sections above it.
-"""
+"""Scoring functions for tokamak equilibrium reconstructions in fec_site."""
 from __future__ import annotations
 
 import json
@@ -22,7 +19,6 @@ from derive import derive_frame  # noqa: E402
 from lcfs import extract_lcfs, major_radius  # noqa: E402
 
 MACHINE = "MAST"
-STEMS = ("mast_shot_28348", "mast_shot_28350", "mast_shot_28351")
 ENVELOPE = np.load(SCORING / "masks" / "mast_envelope.npz")
 MASK = np.asarray(ENVELOPE["mask_coarse"], dtype=bool)
 D3D_MASK = np.asarray(np.load(SCORING / "masks" / "d3d_envelope.npz")["mask_coarse"], dtype=bool)
@@ -300,102 +296,6 @@ def cache_path(pred_dir: Path, stem: str) -> Path:
     return pred_dir / f"{stem}_score.json"
 
 
-def file_cache_path(pred_dir: Path) -> Path:
-    return pred_dir / "validation_score.json"
-
-
-def score_file(rows: dict, preds: dict, shot_packs: dict[str, dict], sign: float) -> dict:
-    """Official column: concatenation over the scored file (Restriction table, Ψ)."""
-    stems = [s for s in STEMS if s in rows and s in preds and s in shot_packs]
-    if not stems:
-        raise FileNotFoundError("no labelled MAST shots to score")
-    efit_psi = np.concatenate([np.asarray(rows[s]["efit_psirz"], np.float64).ravel() for s in stems])
-    pred_psi = sign * np.concatenate([np.asarray(preds[s]["psirz"], np.float64).ravel() for s in stems])
-    efit_q = np.concatenate([np.asarray(rows[s]["efit_q95"], np.float64).ravel() for s in stems])
-    pred_q = np.concatenate([np.asarray(preds[s]["q95"], np.float64).ravel() for s in stems])
-    efit_b = np.concatenate([np.asarray(rows[s]["efit_beta_n"], np.float64).ravel() for s in stems])
-    pred_b = np.concatenate([np.asarray(preds[s]["betaN"], np.float64).ravel() for s in stems])
-    r2_psi = r2(pred_psi, efit_psi)
-    r2_q = r2_series(pred_q, efit_q)
-    r2_bn = r2_series(pred_b, efit_b)
-    r2_qb = 0.5 * (r2_q + r2_bn) if np.isfinite(r2_q) and np.isfinite(r2_bn) else float("nan")
-    d_all: list = []
-    cons_e = {name: [] for name in CONS_SCALARS}
-    cons_p = {name: [] for name in CONS_SCALARS}
-    for stem in stems:
-        fr = shot_packs[stem]["frame"]
-        d_all.extend(fr["D"])
-        for name in CONS_SCALARS:
-            cons_e[name].extend(fr["cons_efit"][name])
-            cons_p[name].extend(fr["cons_pred"][name])
-    d_file = _finite_mean(d_all)
-    if np.isfinite(d_file):
-        d_file = min(1.0, max(0.0, d_file))
-    r2_cons = {name: r2_series(cons_p[name], cons_e[name]) for name in CONS_SCALARS}
-    cons_raw, cons_off = consistency_pair(r2_cons)
-    one_minus_d = (1.0 - d_file) if np.isfinite(d_file) else 0.0
-    mine = {
-        "S": mix_s(r2_psi, r2_qb, one_minus_d, cons_off),
-        "r2_psi": r2_psi,
-        "r2_q95": r2_q,
-        "r2_betaN": r2_bn,
-        "r2_qb": r2_qb,
-        "D_LCFS": d_file,
-        "one_minus_D": one_minus_d,
-        "Consistency": cons_raw,
-        "r2_cons": r2_cons,
-    }
-    official = self_terms(efit_psi, efit_q, efit_b, cons_e, d_all)
-    return {
-        "sign": sign,
-        "n_shots": len(stems),
-        "stems": stems,
-        "unclipped": True,
-        "official": official,
-        "file": mine,
-        "diff": term_diff(mine, official),
-        "shots": {stem: shot_packs[stem]["shot"] for stem in stems},
-        "shot_official": {stem: shot_packs[stem].get("official") for stem in stems},
-        "shot_diff": {stem: shot_packs[stem].get("diff") for stem in stems},
-    }
-
-
-def _load_validation_rows_preds(pred_dir: Path) -> tuple[dict, dict]:
-    from src.feq.data import load_shot
-
-    demo = ROOT / "parquet_data"
-    rows: dict = {}
-    preds: dict = {}
-    for stem in STEMS:
-        parquet = demo / f"{stem}.parquet"
-        npz = pred_dir / f"{stem}.npz"
-        if parquet.is_file() and npz.is_file():
-            rows[stem] = load_shot(parquet)
-            pack = np.load(npz)
-            preds[stem] = {key: pack[key] for key in pack.files}
-    return rows, preds
-
-
-def load_or_compute_file(pred_dir: Path) -> dict:
-    path = file_cache_path(pred_dir)
-    rows, preds = _load_validation_rows_preds(pred_dir)
-    shot_packs = {}
-    for stem in STEMS:
-        if stem not in rows or stem not in preds:
-            continue
-        shot_packs[stem] = load_or_compute(pred_dir, stem, rows[stem], preds[stem])
-    if not shot_packs:
-        raise FileNotFoundError("no labelled MAST shots to score")
-    cached = json.loads(path.read_text()) if path.is_file() else None
-    if cached and cached.get("unclipped"):
-        return cached
-    sign = (cached or {}).get("sign") or pick_sign(
-        np.concatenate([np.asarray(preds[s]["psirz"], np.float64).ravel() for s in shot_packs]),
-        np.concatenate([np.asarray(rows[s]["efit_psirz"], np.float64).ravel() for s in shot_packs]),
-    )
-    return _write(path, score_file(rows, preds, shot_packs, sign))
-
-
 def _clean(obj):
     if isinstance(obj, float) and not math.isfinite(obj):
         return None
@@ -410,40 +310,6 @@ def _write(path: Path, pack: dict) -> dict:
     pack = _clean(pack)
     path.write_text(json.dumps(pack))
     return pack
-
-
-def score_validation(pred_dir: Path, rows: dict[str, dict], preds: dict[str, dict]) -> dict[str, dict]:
-    """One sign on all three labelled shots, then the shot / frame columns."""
-    pred_dir.mkdir(parents=True, exist_ok=True)
-    efit_all = []
-    pred_all = []
-    for stem in STEMS:
-        if stem not in rows or stem not in preds:
-            continue
-        efit_all.append(np.asarray(rows[stem]["efit_psirz"], dtype=np.float64))
-        pred_all.append(np.asarray(preds[stem]["psirz"], dtype=np.float64))
-    if not efit_all:
-        raise FileNotFoundError("no labelled MAST shots to score")
-    sign = pick_sign(np.concatenate([p.ravel() for p in pred_all]), np.concatenate([e.ravel() for e in efit_all]))
-    out = {}
-    for stem in STEMS:
-        if stem not in rows or stem not in preds:
-            continue
-        row, pred = rows[stem], preds[stem]
-        pack = score_shot(
-            row["efit_psirz"],
-            pred["psirz"],
-            row["efit_grid_R"],
-            row["efit_grid_Z"],
-            row["efit_q95"],
-            pred["q95"],
-            row["efit_beta_n"],
-            pred["betaN"],
-            sign=sign,
-        )
-        out[stem] = _write(cache_path(pred_dir, stem), pack)
-    _write(file_cache_path(pred_dir), score_file(rows, preds, out, sign))
-    return out
 
 
 def load_or_compute(pred_dir: Path, stem: str, row: dict, pred: dict) -> dict:
@@ -464,26 +330,14 @@ def load_or_compute(pred_dir: Path, stem: str, row: dict, pred: dict) -> dict:
         )
         pack["unclipped"] = True
         return _write(path, pack)
-    from src.feq.data import load_shot
-
-    demo = ROOT / "parquet_data"
-    rows = {stem: row}
-    preds = {stem: pred}
-    for other in STEMS:
-        if other == stem:
-            continue
-        parquet = demo / f"{other}.parquet"
-        npz = pred_dir / f"{other}.npz"
-        if parquet.is_file() and npz.is_file():
-            rows[other] = load_shot(parquet)
-            pack = np.load(npz)
-            preds[other] = {key: pack[key] for key in pack.files}
-    scored = score_validation(pred_dir, rows, preds)
-    if stem not in scored:
+    if "efit_psirz" in row and row["efit_psirz"] is not None:
         pack = score_shot(
             row["efit_psirz"], pred["psirz"], row["efit_grid_R"], row["efit_grid_Z"],
             row["efit_q95"], pred["q95"], row["efit_beta_n"], pred["betaN"],
             sign=pick_sign(pred["psirz"], row["efit_psirz"]),
+            machine="MAST",
+            axis_sign=+1.0,
         )
+        pack["unclipped"] = True
         return _write(path, pack)
-    return scored[stem]
+    return {}

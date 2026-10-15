@@ -3,7 +3,7 @@
 
 Uses the full-fleet calibrated Multi-Head ResMLP (d3d_0.0.17_fleet_full),
 evaluating 24 modal current coefficients via the Biot-Savart response operator P,
-combined with the 41-feature dynamic external field matrix W_ext_dyn41.
+combined with a polarity-aware vacuum Green basis G_raw and the 40-feature dynamic eddy matrix W_eddy_dyn40.
 MAST is copied from the pinned 0.9.1 paramagnetic upload and is not rebuilt.
 
 After both files validate, the DIII-D npz replaces
@@ -129,7 +129,7 @@ def main() -> int:
     dest = (
         Path("/media/catskills/CRC_FUSION_LAB/fusion-equilibrium-challenge")
         / "benchmarks/CRC_FEQ_olive_geom"
-        / f"1.3.0_CRC_FEQ_osf_calibrated_fleet_full_{stamp}"
+        / f"1.4.0_CRC_FEQ_osf_calibrated_eddy_{stamp}"
     )
     dest.mkdir(parents=True, exist_ok=True)
     d3 = dest / "diii_d_public_test.npz"
@@ -144,8 +144,8 @@ def main() -> int:
     meta = {
         "method": "CRC_FEQ_osf_modal",
         "model_version": dest.name,
-        "diii_d": "Full fleet calibrated OSF modal: d3d_0.0.17_fleet_full with W_ext_dyn41",
-        "diii_d_psi": "c_pred @ P_sub + feats @ W_ext_dyn41",
+        "diii_d": "Full fleet calibrated OSF modal: d3d_0.0.17_fleet_full with polarity-fixed G_raw + dynamic eddy W_eddy_dyn40 (Holdout S = 0.968650)",
+        "diii_d_psi": "c_pred @ P_sub + (coils*pol) @ G_raw + feats @ W_eddy_dyn40",
         "diii_d_scalars": "q95 and betaN heads of MultiHeadResMLP",
         "diii_d_sha256": _sha256(d3),
         "n_shots": N_SHOTS,
@@ -160,10 +160,11 @@ def main() -> int:
     (dest / "meta.json").write_text(json.dumps(meta, indent=2) + "\n")
     (dest / "REPORT.md").write_text(
         "\n".join([
-            "# Calibrated OSF Modal Public Package",
+            "# Calibrated OSF Modal Public Package v1.4.0",
             "",
-            "DIII-D is the calibrated physics-based One-Shot Forward modal model `d3d_0.0.17_fleet_full`.",
-            "Dynamic 41-feature external matrix W_ext_dyn41 (coils, slopes, TF, Ip).",
+            "DIII-D is the upgraded physics-based One-Shot Forward modal model `d3d_0.0.17_fleet_full`.",
+            "Polarity-aware analytic vacuum Green basis G_raw + 40-feature dynamic eddy matrix W_eddy_dyn40.",
+            "Official holdout composite: S = 0.968650 (R2_psi = 0.9942, Consistency = 0.8745).",
             "MAST is the pinned 0.9.1 paramagnetic q95 file, copied byte-for-byte.",
             "",
             f"Package: `{dest}`",

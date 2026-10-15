@@ -21,9 +21,8 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from src.feq.data import data_root, load_shot, shot_paths
-from fec_site.score import CONS_SCALARS, _extract, load_or_compute, load_or_compute_file
-from fec_site.diag import load_or_compute_cohort, load_or_compute_diag
-from fec_site.score import STEMS as MAST_STEMS
+from fec_site.score import CONS_SCALARS, _extract, load_or_compute
+from fec_site.diag import load_or_compute_diag
 STATIC = Path(__file__).resolve().parent / "static"
 DEMO = ROOT / "parquet_data"
 SOLVER_ID = "osf_0.0.12"
@@ -59,15 +58,6 @@ SCORE_ROWS = (
 
 
 SETS = {
-    ("mast", "validation"): {
-        "title": "MAST — 3 validation shots",
-        "labelled": True,
-        "paths": lambda: [
-            p
-            for s in (28348, 28350, 28351)
-            if (p := DEMO / f"mast_shot_{s}.parquet").is_file()
-        ],
-    },
     ("mast", "test"): {
         "title": "MAST — unlabelled test shots",
         "labelled": False,
@@ -174,13 +164,8 @@ def mast_home() -> bytes:
         "MAST data",
         _crumb(("/mast", "MAST"))
         + "<h1>MAST data</h1>"
-        f'<p class="lead">Three labelled holdouts with {MODEL_ID} side-by-side, or the 1,206 input-only public-test rows.</p>'
-        + _buttons(
-            [
-                ("/mast/validation", "3 validation shots"),
-                ("/mast/test", "Unlabelled test shots"),
-            ]
-        ),
+        + '<p class="lead">1,206 input-only public-test rows.</p>'
+        + _buttons([("/mast/test", "Unlabelled test shots")]),
     )
 
 
@@ -208,147 +193,8 @@ def _fmt_score(v, digits: int = 4) -> str:
     return f"{x:.{digits}f}"
 
 
-def validation_score_html(machine: str, bucket: str) -> str:
-    try:
-        pack = load_or_compute_file(PRED_DIR)
-    except (FileNotFoundError, KeyError, OSError):
-        return ""
-    file_col = pack["file"]
-    shots = pack["shots"]
-    stems = [s for s in pack.get("stems", []) if s in shots]
-    if not stems:
-        return ""
-    head = (
-        "<tr><th>term</th><th>scored file</th>"
-        + "".join(
-            f'<th><a href="/{machine}/{bucket}/{stem}">{stem.replace("mast_shot_", "")}</a></th>'
-            for stem in stems
-        )
-        + "</tr>"
-    )
-    body_rows = []
-    for sid, label in SCORE_ROWS:
-        cells = [_fmt_score(file_col.get(sid))]
-        cells.extend(_fmt_score(shots[stem].get(sid)) for stem in stems)
-        body_rows.append(
-            "<tr><td>" + label + "</td>" + "".join(f"<td>{c}</td>" for c in cells) + "</tr>"
-        )
-    return (
-        f'<p class="lead">{MODEL_ID} on these 3 labelled holdouts. '
-        "R² rows are unclipped so the miss is visible. "
-        "S still uses the official floor max(0, R²). "
-        "A shot column is the same formulas on that shot only.</p>"
-        f'<p class="meta">Official S = {_fmt_score(file_col.get("S"))} · '
-        f'sign = {_fmt_score(pack.get("sign"), 0)} · {pack.get("n_shots", len(stems))} shots</p>'
-        + '<table class="score">'
-        + "<thead>" + head + "</thead><tbody>" + "".join(body_rows) + "</tbody></table>"
-    )
-
-
-def validation_plots_html() -> str:
-    return r"""
-<h2>115-frame q95 / βN</h2>
-<p class="meta">Concatenated diverted frames on the 3 labelled shots. Green EFIT, blue osf. Pooled R² is the scored-file row.</p>
-<div id="cohort-qb"></div>
-<h2>y = x clouds</h2>
-<p class="meta">Seven Consistency scalars plus q95 and βN. A horizontal smear is a point for a line. MAST has no divertor TS and no F/b coils — shot pages use edge ne and P-coils/EFPS.</p>
-<div id="cohort-scatters"></div>
-<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
-<script>
-const COL_EFIT = "#1b8a3e";
-const COL_PRED = "#1a5fb4";
-const SHOT_COL = {mast_shot_28348: "#1b8a3e", mast_shot_28350: "#1a5fb4", mast_shot_28351: "#c62828"};
-function shortStem(s) { return s.replace("mast_shot_", ""); }
-function fmt(v) {
-  if (v === null || v === undefined || !Number.isFinite(Number(v))) return "—";
-  const x = Number(v);
-  if (Math.abs(x) >= 100) return x.toExponential(2);
-  return x.toFixed(3);
-}
-function concatFrames(pack, keyE, keyP) {
-  const eX = [], eY = [], pX = [], pY = [];
-  let off = 0;
-  (pack.stems || []).forEach((stem) => {
-    const tr = pack.traces[stem];
-    (tr[keyE] || []).forEach((v, i) => { eX.push(off + i); eY.push(v); });
-    (tr[keyP] || []).forEach((v, i) => { pX.push(off + i); pY.push(v); });
-    off += (tr.t || []).length;
-    eX.push(null); eY.push(null); pX.push(null); pY.push(null);
-  });
-  return [
-    {x: eX, y: eY, name: "EFIT", line: {color: COL_EFIT, width: 1.8}, legendgroup: "efit"},
-    {x: pX, y: pY, name: "osf", line: {color: COL_PRED, width: 1.8}, legendgroup: "pred"},
-  ];
-}
-function stackTwo(titles) {
-  return {
-    height: 520,
-    margin: {t: 36, r: 24, b: 40, l: 56},
-    showlegend: true,
-    legend: {orientation: "h", y: 1.08, x: 0},
-    paper_bgcolor: "#ffffff",
-    plot_bgcolor: "#ffffff",
-    xaxis: {title: "", domain: [0, 1], anchor: "y", showticklabels: false},
-    yaxis: {title: titles[0], domain: [0.55, 1], anchor: "x", automargin: true},
-    xaxis2: {title: "frame (concatenated 28348 | 28350 | 28351)", domain: [0, 1], anchor: "y2"},
-    yaxis2: {title: titles[1], domain: [0, 0.45], anchor: "x2", automargin: true},
-  };
-}
-async function drawCohort() {
-  const pack = await (await fetch("/api/mast/validation/cohort")).json();
-  const q = concatFrames(pack, "q95_efit", "q95_pred").map((tr, i) => Object.assign(tr, {xaxis: "x", yaxis: "y", showlegend: i < 2}));
-  const b = concatFrames(pack, "betaN_efit", "betaN_pred").map((tr) => Object.assign(tr, {xaxis: "x2", yaxis: "y2", showlegend: false}));
-  Plotly.newPlot("cohort-qb", q.concat(b), stackTwo(["q95  R²=" + fmt(pack.r2 && pack.r2.q95), "βN  R²=" + fmt(pack.r2 && pack.r2.betaN)]), {responsive: true, displayModeBar: false});
-  const names = ["R_axis", "Z_axis", "kappa", "tri_top", "tri_bot", "volume", "li", "q95", "betaN"];
-  const traces = [];
-  const layout = {
-    grid: {rows: 3, columns: 3, pattern: "independent"},
-    height: 960,
-    margin: {t: 40, r: 24, b: 48, l: 56},
-    showlegend: true,
-    legend: {orientation: "h", y: 1.04, x: 0},
-    paper_bgcolor: "#ffffff",
-    plot_bgcolor: "#ffffff",
-  };
-  names.forEach((name, k) => {
-    const xa = k ? "x" + (k + 1) : "x";
-    const ya = k ? "y" + (k + 1) : "y";
-    const xName = k ? "xaxis" + (k + 1) : "xaxis";
-    const yName = k ? "yaxis" + (k + 1) : "yaxis";
-    const s = (pack.scatters && pack.scatters[name]) || {efit: [], pred: [], shot: []};
-    const vals = (s.efit || []).concat(s.pred || []).filter((v) => Number.isFinite(v));
-    const lo = vals.length ? Math.min(...vals) : 0;
-    const hi = vals.length ? Math.max(...vals) : 1;
-    const pad = (hi - lo) * 0.08 || 0.1;
-    traces.push({
-      x: [lo - pad, hi + pad], y: [lo - pad, hi + pad], mode: "lines",
-      line: {color: "#bbbbbb", dash: "dot", width: 1},
-      xaxis: xa, yaxis: ya, showlegend: false, hoverinfo: "skip",
-    });
-    (pack.stems || []).forEach((stem) => {
-      const xs = [], ys = [];
-      (s.shot || []).forEach((sh, i) => {
-        if (sh === stem) { xs.push(s.efit[i]); ys.push(s.pred[i]); }
-      });
-      traces.push({
-        x: xs, y: ys, mode: "markers",
-        marker: {size: 6, color: SHOT_COL[stem]},
-        name: shortStem(stem),
-        xaxis: xa, yaxis: ya,
-        showlegend: k === 0,
-        legendgroup: stem,
-      });
-    });
-    layout[xName] = {title: "EFIT " + name, range: [lo - pad, hi + pad], zeroline: false};
-    layout[yName] = {title: "osf  R²=" + fmt(pack.r2 && pack.r2[name]), range: [lo - pad, hi + pad], zeroline: false, automargin: true};
-  });
-  Plotly.newPlot("cohort-scatters", traces, layout, {responsive: true, displayModeBar: false});
-}
-drawCohort();
-</script>
-"""
-
-
+def dummy_plots() -> str:
+    return ""
 def shot_browser(machine: str, bucket: str, query: dict[str, list[str]]) -> bytes:
     spec = _set(machine, bucket)
     idx = _index(machine, bucket)
@@ -363,12 +209,10 @@ def shot_browser(machine: str, bucket: str, query: dict[str, list[str]]) -> byte
     prev_p = max(1, page - 1)
     next_p = min(n_pages, page + 1)
     q_esc = q.replace('"', "&quot;")
-    wide = machine == "mast" and bucket == "validation"
-    score_block = validation_score_html(machine, bucket) if wide else ""
     body = (
         _crumb((f"/{machine}", machine.upper()), (f"/{machine}/{bucket}", spec["title"]))
         + f"<h1>{spec['title']}</h1>"
-        + (score_block or f'<p class="meta">{len(stems)} shots. Labelled: {spec["labelled"]}.</p>')
+        + f'<p class="meta">{len(stems)} shots. Labelled: {spec["labelled"]}.</p>'
         + f'<form class="search" method="get" action="/{machine}/{bucket}">'
         f'<input name="q" value="{q_esc}" placeholder="filter by filename"/>'
         f'<button class="btn small" type="submit">Find</button></form>'
@@ -378,9 +222,8 @@ def shot_browser(machine: str, bucket: str, query: dict[str, list[str]]) -> byte
         f"<span>page {page} / {n_pages}</span>"
         f'<a class="btn ghost small" href="/{machine}/{bucket}?q={q}&page={next_p}">Next</a>'
         f"</div>"
-        + (validation_plots_html() if wide else "")
     )
-    return _html(spec["title"], body, wide=wide)
+    return _html(spec["title"], body)
 
 
 def _times_ms(row: dict) -> np.ndarray:
@@ -1673,21 +1516,6 @@ def api_diag(machine: str, bucket: str, stem: str) -> dict:
     return load_or_compute_diag(pred_dir, stem, row, pred, score)
 
 
-def api_cohort() -> dict:
-    rows, preds, scores = {}, {}, {}
-    idx = _index("mast", "validation")
-    for stem in MAST_STEMS:
-        if stem not in idx or not _has_pred(stem):
-            continue
-        row = _load(idx[stem])
-        pred = _load_pred(stem)
-        score = load_or_compute(PRED_DIR, stem, row, pred)
-        rows[stem] = row
-        preds[stem] = pred
-        scores[stem] = score
-    return load_or_compute_cohort(PRED_DIR, rows, preds, scores)
-
-
 class Handler(BaseHTTPRequestHandler):
     def log_message(self, fmt: str, *args) -> None:
         print(f"{self.address_string()} {fmt % args}")
@@ -1723,8 +1551,6 @@ class Handler(BaseHTTPRequestHandler):
             parts = [p for p in path.split("/") if p]
             if len(parts) == 2 and (parts[0], parts[1]) in SETS:
                 return self._send(shot_browser(parts[0], parts[1], query))
-            if parts == ["api", "mast", "validation", "cohort"]:
-                return self._json(api_cohort())
             if parts[:1] == ["api"] and len(parts) >= 5:
                 _, machine, bucket, stem, kind = parts[:5]
                 if kind == "scalars":

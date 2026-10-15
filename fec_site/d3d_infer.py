@@ -2,7 +2,7 @@
 
 Uses the full-fleet calibrated Multi-Head ResMLP (d3d_0.0.17_fleet_full),
 evaluating 24 modal current coefficients via the Biot-Savart response operator P,
-combined with the 41-feature dynamic external field matrix W_ext_dyn41.
+combined with a polarity-aware vacuum Green basis G_raw and the 40-feature dynamic eddy matrix W_eddy_dyn40 when that pack is present.
 """
 from __future__ import annotations
 
@@ -24,7 +24,7 @@ _CACHE: dict = {}
 
 def _get_runtime():
     if "model" in _CACHE:
-        return _CACHE["model"], _CACHE["weights"], _CACHE["grid"], _CACHE["P_sub"], _CACHE["W_dyn"]
+        return _CACHE["model"], _CACHE["weights"], _CACHE["grid"], _CACHE["P_sub"], _CACHE["W_dyn"], _CACHE.get("eddy_pack")
 
     from catskills.gs_solver import load_response
     from train_fleet_full import MultiHeadResMLP
@@ -35,6 +35,7 @@ def _get_runtime():
     weights_path = RESULTS_DIR / "weights.npz"
     ckpt_path = RESULTS_DIR / "weights_best.pt"
     wdyn_path = RESULTS_DIR / "W_ext_dyn41.npz"
+    eddy_path = RESULTS_DIR / "W_eddy_dyn40.npz"
 
     if not weights_path.is_file() or not ckpt_path.is_file():
         raise FileNotFoundError(f"Missing model files in {RESULTS_DIR}")
@@ -44,6 +45,14 @@ def _get_runtime():
     P = load_response("d3")
     P_sub = basis @ P.T     # (24, 4225)
     W_dyn = np.load(wdyn_path)["W_ext"] if wdyn_path.is_file() else w_data["W_ext"]
+
+    eddy_pack = None
+    if eddy_path.is_file():
+        d_eddy = np.load(eddy_path)
+        eddy_pack = {
+            "W_eddy": d_eddy["W_eddy"],
+            "G_raw": d_eddy["G_raw"],
+        }
 
     model = MultiHeadResMLP(in_d=64).to(device)
     model.load_state_dict(torch.load(ckpt_path, map_location=device))
@@ -63,7 +72,8 @@ def _get_runtime():
     _CACHE["grid"] = grid
     _CACHE["P_sub"] = P_sub
     _CACHE["W_dyn"] = W_dyn
-    return model, w_data, grid, P_sub, W_dyn
+    _CACHE["eddy_pack"] = eddy_pack
+    return model, w_data, grid, P_sub, W_dyn, eddy_pack
 
 
 def predict_d3d_osf(raw_X: np.ndarray, ip_ka: np.ndarray | None = None) -> dict:
@@ -71,19 +81,17 @@ def predict_d3d_osf(raw_X: np.ndarray, ip_ka: np.ndarray | None = None) -> dict:
     from calibrate_probe_100 import extract_features, COIL_INDICES
 
     with _LOCK:
-        model, w_data, grid, P_sub, W_dyn = _get_runtime()
+        model, w_data, grid, P_sub, W_dyn, eddy_pack = _get_runtime()
         device = grid["device"]
 
         if ip_ka is None or len(ip_ka) != len(raw_X):
             # Column 20 in raw magnetics (index 20*3 = 60)
             ip_ka = np.abs(raw_X[:, 20 * 3]) if raw_X.shape[1] > 60 else np.ones(len(raw_X))
 
+        ip_raw = raw_X[:, 20 * 3] if raw_X.shape[1] > 60 else np.ones(len(raw_X))
+        pol = -1.0 if len(ip_raw) > 0 and ip_raw[np.argmax(np.abs(ip_raw))] < 0.0 else 1.0
+
         f = extract_features(raw_X, ip_est=ip_ka)
-        coils = raw_X[:, COIL_INDICES]
-        slopes = raw_X[:, [i + 1 for i in COIL_INDICES]]
-        tf = raw_X[:, 1 * 3 : 1 * 3 + 1]
-        ones = np.ones((len(raw_X), 1))
-        feats = np.column_stack([coils, slopes, tf, ip_ka.reshape(-1, 1), ones])
 
         mean_X, scale_X = w_data["scaler_X_mean"], w_data["scaler_X_scale"]
         mean_c, scale_c = w_data["scaler_c_mean"], w_data["scaler_c_scale"]
@@ -99,7 +107,20 @@ def predict_d3d_osf(raw_X: np.ndarray, ip_ka: np.ndarray | None = None) -> dict:
             b_pred = (s_pred[:, 1] * scale_b[0] + mean_b[0]).ravel()
 
         psi_pla = c_pred @ P_sub
-        psi_ext = feats @ W_dyn
+
+        if eddy_pack is not None:
+            coils = raw_X[:, COIL_INDICES] * pol
+            slopes = raw_X[:, [i + 1 for i in COIL_INDICES]] * pol
+            f_eddy = np.column_stack([coils, slopes, ip_ka.reshape(-1, 1), np.ones((len(raw_X), 1))])
+            psi_ext = coils @ eddy_pack["G_raw"] + f_eddy @ eddy_pack["W_eddy"]
+        else:
+            coils = raw_X[:, COIL_INDICES]
+            slopes = raw_X[:, [i + 1 for i in COIL_INDICES]]
+            tf = raw_X[:, 1 * 3 : 1 * 3 + 1]
+            ones = np.ones((len(raw_X), 1))
+            feats = np.column_stack([coils, slopes, tf, ip_ka.reshape(-1, 1), ones])
+            psi_ext = feats @ W_dyn
+
         psi_tot = (psi_pla + psi_ext).reshape(-1, 65, 65)
 
         return {
@@ -142,7 +163,7 @@ def ensure_d3d_pred(stem: str) -> bool:
         beta = np.asarray(pred["betaN"], np.float32).reshape(-1)
 
         with _LOCK:
-            _, _, grid, _, _ = _get_runtime()
+            _, _, grid, _, _, _ = _get_runtime()
             find_o_point = grid["find_o_point"]
             axis_r = np.zeros(len(psi), np.float32)
             axis_z = np.zeros(len(psi), np.float32)

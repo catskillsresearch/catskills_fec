@@ -267,7 +267,7 @@ def plot_mast(row: dict, out: Path) -> None:
     ax.set_ylim(-2.55, 2.45)
     ax.set_xlabel("major radius  R  (m)")
     ax.set_ylabel("vertical height  Z  (m)")
-    ax.set_title("MAST poloidal cross-section  —  shot 28348, mid-flattop")
+    ax.set_title("MAST poloidal cross-section  —  mid-flattop")
     ax.legend(loc="upper left", fontsize=7, framealpha=0.92)
     fig.tight_layout()
     fig.savefig(out, bbox_inches="tight")
@@ -275,12 +275,16 @@ def plot_mast(row: dict, out: Path) -> None:
 
 
 def main() -> None:
-    d3d = load_row(ROOT / "parquet_data" / "d3d_shot_203702.parquet")
-    mast = load_row(ROOT / "parquet_data" / "mast_shot_28348.parquet")
-    plot_d3d(d3d, OUT / "diii_d_poloidal.png")
-    plot_mast(mast, OUT / "mast_poloidal.png")
-    print("wrote", OUT / "diii_d_poloidal.png")
-    print("wrote", OUT / "mast_poloidal.png")
+    d3d_files = list((ROOT / "parquet_data" / "diii_d_train").glob("*.parquet")) or list((ROOT / "parquet_data").glob("d3d_shot_*.parquet"))
+    mast_files = list((ROOT / "parquet_data" / "mast_public_test").glob("*.parquet")) or list((ROOT / "parquet_data").glob("mast_shot_*.parquet"))
+    if d3d_files:
+        d3d = load_row(d3d_files[0])
+        plot_d3d(d3d, OUT / "diii_d_poloidal.png")
+        print("wrote", OUT / "diii_d_poloidal.png")
+    if mast_files:
+        mast = load_row(mast_files[0])
+        plot_mast(mast, OUT / "mast_poloidal.png")
+        print("wrote", OUT / "mast_poloidal.png")
 
 
 if __name__ == "__main__":

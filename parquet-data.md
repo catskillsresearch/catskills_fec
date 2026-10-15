@@ -34,7 +34,7 @@ How many coils $C$, how many chords $N$, the names of the coil-current columns, 
 
 ## MAST Introduction
 
-MAST (Mega Ampère Spherical Tokamak, Culham) is a tight-aspect-ratio machine: $R_0\simeq 0.9\,\mathrm{m}$, $a\simeq 0.6\,\mathrm{m}$, $B_\varphi\simeq 0.55\,\mathrm{T}$, $I_p\lesssim 1.3\,\mathrm{MA}$. There is **no** `mast_train`. Challenge 2 is zero-shot from DIII-D. Photographs below are the vessel and a diverted plasma; the cross-section is official FAIR geometry on demo shot 28348.
+MAST (Mega Ampère Spherical Tokamak, Culham) is a tight-aspect-ratio machine: $R_0\simeq 0.9\,\mathrm{m}$, $a\simeq 0.6\,\mathrm{m}$, $B_\varphi\simeq 0.55\,\mathrm{T}$, $I_p\lesssim 1.3\,\mathrm{MA}$. There is **no** `mast_train`. Challenge 2 is zero-shot from DIII-D. Photographs below are the vessel and a diverted plasma; the cross-section is official FAIR geometry for MAST.
 
 ![MAST tokamak with plasma](fec_figures/mast_tokamak.jpg)
 
@@ -92,13 +92,13 @@ Same column names as DIII-D. Join with `coil_input_column`. P2 $=20$ elements, P
 
 Same incoherent-TS physics as DIII-D. The laser is a **horizontal midplane** beam: **`thomson_chord_Z` $=0$** by construction. FAIR level-2 exposes only `thomson_scattering.channel[:].position.r`.
 
-- **`thomson_core_times`**, **`thomson_core_Te`**, **`thomson_core_ne`**, **`thomson_core_R`**. Core channels along $R\in[0.23,1.52]\,\mathrm{m}$ at $Z=0$ (130 channels on the demo shot).
-- **`thomson_edge_times`**, **`thomson_edge_Te`**, **`thomson_edge_ne`**, **`thomson_edge_spatial`**. Edge block is $R$ (typically $1.3$–$1.5\,\mathrm{m}$), 16 channels on the demo shot.
+- **`thomson_core_times`**, **`thomson_core_Te`**, **`thomson_core_ne`**, **`thomson_core_R`**. Core channels along $R\in[0.23,1.52]\,\mathrm{m}$ at $Z=0$ (typically 130 channels).
+- **`thomson_edge_times`**, **`thomson_edge_Te`**, **`thomson_edge_ne`**, **`thomson_edge_spatial`**. Edge block is $R$ (typically $1.3$–$1.5\,\mathrm{m}$, 16 channels).
 - **`thomson_chord_name`**, **`thomson_chord_R`**, **`thomson_chord_Z`**.
 
 ## MAST Withheld on test
 
-There is no MAST train config. `efit_psirz`, scalars, LCFS, and `magnetics_dsep` are absent from `mast_public_test`. The three labelled starter-kit rows are on [MAST parquet](#mast-parquet-data-format). MAST `magnetics_dsep` is **not** DIII-D `DSEP`: it is `esm/dr_sep_out`, upper/lower divertor balance $\delta R_{\mathrm{sep}}$. Its sign is not a diverted/limited flag.
+There is no MAST train config. `efit_psirz`, scalars, LCFS, and `magnetics_dsep` are absent from `mast_public_test`. MAST `magnetics_dsep` is **not** DIII-D `DSEP`: it is `esm/dr_sep_out`, upper/lower divertor balance $\delta R_{\mathrm{sep}}$. Its sign is not a diverted/limited flag.
 
 ## MAST Parquet Data Format
 
@@ -111,16 +111,6 @@ There is **no** `mast_train`. Challenge 2 is zero-shot. The released Hugging Fac
 | `mast_public_test` | `public_test` | 1,206 | Inputs only. Every EFIT-derived column is omitted, not null-filled. |
 
 That is the public-test fleet you predict on. Magnetics clocks on those 1,206 rows: 1,092 shots at uniform $5\,\mathrm{kHz}$ ($T_{\mathrm{mag}}=30000$); 114 early-campaign shots at $T_{\mathrm{mag}}=15482$ (union of a $5\,\mathrm{kHz}$ poloidal grid and a $1\,\mathrm{kHz}$ toroidal-field grid). Details on [coordinates and clocks](#mast-coordinates-and-clocks). Coil-current column names, $C=812$, and Thomson layout are detailed in the other MAST subsections.
-
-**Three held-out labelled shots** sit in the starter kit, not in `mast_public_test`:
-
-| File | Shot |
-|---|---|
-| `parquet_data/mast_shot_28348.parquet` | 28348 |
-| `parquet_data/mast_shot_28350.parquet` | 28350 |
-| `parquet_data/mast_shot_28351.parquet` | 28351 |
-
-These three rows carry `efit_psirz` and the MAST-only aux EFIT scalars (`efit_beta_p`, `efit_elongation`, `efit_psi_axis`, `efit_psi_boundary`, `efit_geom_axis_r/z`) that the public-test config does not ship. Together they have **115 flattop frames** with a closed surface. They are a smell-test / format check, not a train split and not a substitute for the 1,206-shot public fold.
 
 ## DIII-D Data
 

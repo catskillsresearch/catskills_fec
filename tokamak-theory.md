@@ -169,7 +169,7 @@ How many coils, what they are called, and the exact $(R,Z)$ of each rectangle ar
 
 ## What is a shot?
 
-The operators do not leave the doughnut running all day. They turn it on for a few seconds, take a lot of pictures, then turn it off. That whole pulse is one **shot**. It has a number (203702 on DIII-D, 28348 on MAST, and so on). A shot is not one picture. It is a **sequence of snapshots**: flux maps of the doughnut’s magnetic “weather,” plus whatever else the gadgets wrote down while the pulse was on. Think of one video: many frames, one filename.
+The operators do not leave the doughnut running all day. They turn it on for a few seconds, take a lot of pictures, then turn it off. That whole pulse is one **shot**. It has a number (e.g. 203702 on DIII-D, 12345 on MAST, and so on). A shot is not one picture. It is a **sequence of snapshots**: flux maps of the doughnut’s magnetic “weather,” plus whatever else the gadgets wrote down while the pulse was on. Think of one video: many frames, one filename.
 
 Those snapshots do not all fire at the same instants. So one shot is several movies of different lengths, all covering the same few seconds. How that row is stored is the [Parquet data format](parquet-data.md#parquet-data-format).
 
