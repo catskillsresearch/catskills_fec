@@ -170,7 +170,7 @@ def package_calibrated_submission(
 
     try:
         from feq.labdisk import OUTPUTS
-        if OUTPUTS.is_dir():
+        if out_dir is None and OUTPUTS.is_dir():
             shutil.copy2(d3d_out, OUTPUTS / "diii_d_public_test.npz")
             shutil.copy2(mast_out, OUTPUTS / "mast_public_test.npz")
             print(f"Updated live outputs in {OUTPUTS}")

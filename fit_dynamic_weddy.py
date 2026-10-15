@@ -114,7 +114,7 @@ def main():
         r2_holdout=best_r2,
     )
     print(f"Saved optimized dynamic eddy matrix to {out_path}")
-    if LAB_RESULTS.is_dir() and out_path != (LAB_RESULTS / "W_eddy_dyn40.npz"):
+    if args.out is None and LAB_RESULTS.is_dir() and out_path != (LAB_RESULTS / "W_eddy_dyn40.npz"):
         try:
             np.savez_compressed(
                 LAB_RESULTS / "W_eddy_dyn40.npz",
