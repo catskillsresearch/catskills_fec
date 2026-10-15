@@ -12,6 +12,7 @@ Evaluates using the official Leaderboard scoring methodology:
 """
 from __future__ import annotations
 
+import argparse
 import json
 import os
 import sys
@@ -66,19 +67,39 @@ def shift_psirz(psi: np.ndarray, dZ_mm: float = 0.5, dz_grid_m: float = 0.05) ->
 
 
 def main():
+    parser = argparse.ArgumentParser(description="Evaluate D3D solutions on random full shots.")
+    parser.add_argument("--seed", type=int, default=101, help="Random seed for sampling shots (default: 101)")
+    parser.add_argument("--n-shots", type=int, default=100, help="Number of shots to sample (default: 100)")
+    parser.add_argument("--disjoint-from", type=int, default=42, help="Seed of previous cohort to be disjoint from (default: 42, set -1 for independent)")
+    parser.add_argument("--out-name", type=str, default=None, help="Custom receipt output filename")
+    parser.add_argument("--compare-with", type=str, default="receipt_100_shot_pretest.json", help="Previous receipt JSON to compare against")
+    args = parser.parse_args()
+
     RESULTS_OUT_DIR.mkdir(parents=True, exist_ok=True)
     print("=" * 80)
     print("=== DIII-D 100-SHOT MULTI-SOLUTION LEADERBOARD BENCHMARK ===")
     print("=" * 80)
 
-    # 1. Sample 100 random shots from the 800 holdout shots
+    # 1. Sample random shots from the 800 holdout shots
     split_info = json.load(open(SEALED_SPLIT_PATH))
     all_hold_keys = split_info["hold"]
-    rng = np.random.RandomState(42)
-    sampled_indices = np.sort(rng.choice(len(all_hold_keys), size=100, replace=False))
-    sampled_keys = [all_hold_keys[i] for i in sampled_indices]
+    n_total = len(all_hold_keys)
 
-    print(f"Sampled 100 shots (seed=42) from {len(all_hold_keys)} holdout shots.")
+    if args.disjoint_from >= 0:
+        rng_prev = np.random.RandomState(args.disjoint_from)
+        prev_indices = set(rng_prev.choice(n_total, size=args.n_shots, replace=False))
+        eligible_indices = np.array([i for i in range(n_total) if i not in prev_indices])
+        print(f"Sampling {args.n_shots} shots disjoint from seed {args.disjoint_from} ({len(eligible_indices)} eligible shots remaining)...")
+        rng = np.random.RandomState(args.seed)
+        chosen_pos = rng.choice(len(eligible_indices), size=args.n_shots, replace=False)
+        sampled_indices = np.sort(eligible_indices[chosen_pos])
+    else:
+        print(f"Sampling {args.n_shots} shots with seed {args.seed} from {n_total} holdout shots...")
+        rng = np.random.RandomState(args.seed)
+        sampled_indices = np.sort(rng.choice(n_total, size=args.n_shots, replace=False))
+
+    sampled_keys = [all_hold_keys[i] for i in sampled_indices]
+    print(f"Sampled {len(sampled_keys)} full shots (seed={args.seed}, disjoint_from={args.disjoint_from}).")
 
     # 2. Load PCA Basis for psi reconstruction
     pca_data = np.load(PCA_BASIS_PATH)
@@ -297,9 +318,15 @@ def main():
         }
 
     # Save complete scorecard
-    out_json = RESULTS_OUT_DIR / "receipt_100_shot_pretest.json"
+    if args.out_name:
+        out_json = RESULTS_OUT_DIR / args.out_name
+    else:
+        out_json = RESULTS_OUT_DIR / f"receipt_100_shot_pretest_seed{args.seed}.json"
+
     with open(out_json, "w") as f:
         json.dump({
+            "seed": args.seed,
+            "disjoint_from": args.disjoint_from,
             "sampled_keys": sampled_keys,
             "n_shots": len(sampled_keys),
             "n_frames": n_total_frames,
@@ -308,14 +335,40 @@ def main():
         }, f, indent=2)
     print(f"\nSaved full results to {out_json}")
 
-    # Print Comparative Table
+    # Print Comparative Table for Current Run
     print("\n" + "=" * 105)
-    print(f"{'Solution':<45} {'S':>9} {'Cons':>9} {'R2_psi':>9} {'R2_qb':>9} {'1-D':>9} {'kappa':>9}")
+    print(f"RESULTS FOR COHORT (Seed {args.seed}, {len(sampled_keys)} full shots, {n_total_frames:,} frames):")
+    print(f"{'Solution':<48} {'S':>9} {'Cons':>9} {'R2_psi':>9} {'R2_qb':>9} {'1-D':>9} {'kappa':>9}")
     print("-" * 105)
     for label, res in all_scores.items():
         k_val = res["r2_cons_each"].get("kappa", float("nan"))
-        print(f"{label:<45} {res['S']:>9.5f} {res['consistency']:>9.5f} {res['r2_psi']:>9.6f} {res['r2_qb']:>9.5f} {res['one_minus_dlcfs']:>9.5f} {k_val:>9.5f}")
+        print(f"{label:<48} {res['S']:>9.5f} {res['consistency']:>9.5f} {res['r2_psi']:>9.6f} {res['r2_qb']:>9.5f} {res['one_minus_dlcfs']:>9.5f} {k_val:>9.5f}")
     print("=" * 105)
+
+    # Cross-Cohort Comparative Analysis (Cohort 1 vs Cohort 2)
+    cmp_path = RESULTS_OUT_DIR / args.compare_with
+    if cmp_path.is_file():
+        try:
+            prev_data = json.load(open(cmp_path))
+            prev_scores = prev_data.get("scores", {})
+            print("\n" + "=" * 115)
+            print(f"CROSS-COHORT GENERALIZATION: Cohort 1 (Seed {args.disjoint_from}) vs Cohort 2 (Seed {args.seed})")
+            print("=" * 115)
+            print(f"{'Solution':<42} {'S (C1)':>8} {'S (C2)':>8} {'Δ S':>8} {'R2_qb(C1)':>10} {'R2_qb(C2)':>10} {'Cons(C1)':>9} {'Cons(C2)':>9}")
+            print("-" * 115)
+            for label, res in all_scores.items():
+                if label in prev_scores:
+                    s1 = prev_scores[label]["S"]
+                    s2 = res["S"]
+                    ds = s2 - s1
+                    qb1 = prev_scores[label]["r2_qb"]
+                    qb2 = res["r2_qb"]
+                    c1 = prev_scores[label]["consistency"]
+                    c2 = res["consistency"]
+                    print(f"{label:<42} {s1:>8.5f} {s2:>8.5f} {ds:>+8.5f} {qb1:>10.5f} {qb2:>10.5f} {c1:>9.5f} {c2:>9.5f}")
+            print("=" * 115)
+        except Exception as e:
+            print(f"Could not print comparative analysis: {e}")
 
 
 if __name__ == "__main__":
