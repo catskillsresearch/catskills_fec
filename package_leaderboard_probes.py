@@ -49,20 +49,13 @@ BENCHMARKS_DIR = (
     / "CRC_FEQ_probes"
 )
 
-# Pinned champion DIII-D predictions (un-tilted 6-member blend, holdout S = 0.995769)
-D3D_DONOR = (
-    Path("/media/catskills/CRC_FUSION_LAB/fusion-equilibrium-challenge")
-    / "benchmarks/CRC_FEQ_olive_geom"
-    / "0.8.0_CRC_FEQ_grand_master_trajectory_20261004_142451"
-    / "diii_d_public_test.npz"
-)
-if not D3D_DONOR.is_file():
-    D3D_DONOR = Path("/media/catskills/CRC_FUSION_LAB/fusion-equilibrium-cleanroom/outputs/diii_d_public_test.npz")
+# Pinned champion DIII-D predictions
+D3D_DONOR = Path("/media/catskills/CRC_FUSION_LAB/fusion-equilibrium-cleanroom/outputs/diii_d_public_test.npz")
 
 # Base MAST predictions (0.9.1 paramagnetic upload)
 MAST_BASE = (
     Path("/media/catskills/CRC_FUSION_LAB/fusion-equilibrium-challenge")
-    / "benchmarks/CRC_FEQ_olive_geom"
+    / "benchmarks/CRC_FEQ_osf"
     / "0.9.1_CRC_FEQ_mast_paramagnetic_q95_20261004_180504"
     / "mast_public_test.npz"
 )

@@ -410,7 +410,7 @@ The physics-based One-Shot Forward (OSF) modal model (`d3d_0.0.17_fleet_full`) p
 - **Live Codabench Leaderboard (Submission 989567)**:
   - **DIII-D Score**: **$S_{\mathrm{D3D}} = \mathbf{0.962459}$** ($R^2_\psi = 0.992780$, $R^2_{qb} = 0.991920$, $D_{\mathrm{LCFS}} = 0.026320$, Consistency $= 0.851367$).
   - **Challenge 2 Ratio Score**: **$G_{\mathrm{ratio}} = \mathbf{0.592884}$** (Admissibility gate successfully passed).
-  - Pinned export path: `benchmarks/CRC_FEQ_olive_geom/1.4.0_CRC_FEQ_osf_calibrated_eddy_20261015_040322/diii_d_public_test.npz`.
+  - Pinned export path: `benchmarks/CRC_FEQ_osf/1.4.0_CRC_FEQ_osf_calibrated_eddy_20261015_040322/diii_d_public_test.npz`.
 
 
 

@@ -40,7 +40,7 @@ from src.feq.data import load_shot
 
 MAST_PIN = (
     Path("/media/catskills/CRC_FUSION_LAB/fusion-equilibrium-challenge")
-    / "benchmarks/CRC_FEQ_olive_geom"
+    / "benchmarks/CRC_FEQ_osf"
     / "0.9.1_CRC_FEQ_mast_paramagnetic_q95_20261004_180504"
     / "mast_public_test.npz"
 )
@@ -128,7 +128,7 @@ def main() -> int:
     stamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
     dest = (
         Path("/media/catskills/CRC_FUSION_LAB/fusion-equilibrium-challenge")
-        / "benchmarks/CRC_FEQ_olive_geom"
+        / "benchmarks/CRC_FEQ_osf"
         / f"1.4.0_CRC_FEQ_osf_calibrated_eddy_{stamp}"
     )
     dest.mkdir(parents=True, exist_ok=True)

@@ -37,7 +37,7 @@ sys.path.insert(0, str(ROOT / "src"))
 BENCHMARKS_DIR = (
     Path("/media/catskills/CRC_FUSION_LAB/fusion-equilibrium-challenge")
     / "benchmarks"
-    / "CRC_FEQ_olive_geom"
+    / "CRC_FEQ_osf"
 )
 
 # Pinned 0.9.1 MAST baseline (c = 1.20)
@@ -107,7 +107,7 @@ def package_calibrated_submission(
     print(f"Calibrated MAST q95 percentiles (p05 / median / p95): {perc['p05']:.3f} / {perc['median']:.3f} / {perc['p95']:.3f}")
 
     stamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
-    dest = out_dir or (BENCHMARKS_DIR / f"1.5.0_CRC_FEQ_calibrated_dual_champions_{stamp}")
+    dest = out_dir or (BENCHMARKS_DIR / f"1.5.0_CRC_FEQ_osf_dual_champions_{stamp}")
     dest.mkdir(parents=True, exist_ok=True)
 
     mast_out = dest / "mast_public_test.npz"

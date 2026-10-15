@@ -145,7 +145,7 @@ if [[ ${DRY_RUN} -eq 1 ]]; then
     PKG_OUT="${DRY_DIR}/package"
     ${PYTHON} export_calibrated_osf_mast.py --out-dir "${PKG_OUT}"
 else
-    PKG_OUT="$(date -u +'benchmarks/CRC_FEQ_olive_geom/1.5.0_CRC_FEQ_reproduced_%Y%m%d_%H%M%S')"
+    PKG_OUT="$(date -u +'benchmarks/CRC_FEQ_osf/1.5.0_CRC_FEQ_osf_reproduced_%Y%m%d_%H%M%S')"
     ${PYTHON} export_calibrated_osf_mast.py --out-dir "${PKG_OUT}"
 fi
 
