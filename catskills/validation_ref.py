@@ -57,8 +57,28 @@ def _write_cache(config: str, counts: list[int]) -> None:
     )
 
 
+def from_feature_cache(config: str) -> list[int] | None:
+    feat_idx = lab_root() / "cache" / "public_test_features_v1" / f"{config}_th1" / "index.json"
+    if feat_idx.is_file():
+        try:
+            data = json.loads(feat_idx.read_text())
+            entries = data.get("entries", [])
+            expected = PUBLIC_TEST_SHOTS.get(config)
+            if entries and (expected is None or len(entries) == expected):
+                return [int(e["n_frames"]) for e in entries]
+        except Exception:
+            pass
+    return None
+
+
 def from_psivac_pool(config: str) -> list[int]:
-    from catskills.scripts.psivac_pool import open_pool
+    try:
+        from catskills.scripts.psivac_pool import open_pool
+    except ImportError:
+        counts = from_feature_cache(config)
+        if counts is not None:
+            return counts
+        raise
 
     split = CONFIG_POOL_SPLIT[config]
     pool = open_pool(split=split)
@@ -78,6 +98,10 @@ def shot_frame_counts(config: str, *, prefer: str = "auto") -> tuple[list[int], 
         cached = _load_cache(config)
         if cached is not None:
             return cached, "cache"
+        counts = from_feature_cache(config)
+        if counts is not None:
+            _write_cache(config, counts)
+            return counts, "feature cache"
         if prefer == "cache":
             raise FileNotFoundError(f"no validation ref cache at {cache_path(config)}")
 

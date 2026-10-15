@@ -58,6 +58,13 @@ D3D_EDDY = (
 if not D3D_EDDY.is_file():
     D3D_EDDY = Path("/media/catskills/CRC_FUSION_LAB/fusion-equilibrium-cleanroom/outputs/diii_d_public_test.npz")
 
+# 0.8.0 Grand Master 6-member ensemble benchmark (S = 0.994449)
+D3D_CHAMPION = Path(
+    "/media/catskills/CRC_FUSION_LAB/fusion-equilibrium-challenge/benchmarks/archive/CRC_FEQ_olive_geom/0.8.0_CRC_FEQ_grand_master_trajectory_20261004_142451/diii_d_public_test.npz"
+)
+if not D3D_CHAMPION.is_file():
+    D3D_CHAMPION = Path("/media/catskills/CRC_FUSION_LAB/fusion-equilibrium-cleanroom/outputs/diii_d_public_test_six_member_blend.npz")
+
 
 def _sha256(p: Path) -> str:
     h = hashlib.sha256()
@@ -80,11 +87,33 @@ def package_calibrated_submission(
     c_star: float = 1.062242,
     push: bool = False,
     out_dir: Path | None = None,
+    d3d_source: Path | None = None,
+    use_champion: bool = False,
 ) -> Path:
     if not MAST_BASE.is_file():
         raise SystemExit(f"Base MAST file not found: {MAST_BASE}")
-    if not D3D_EDDY.is_file():
-        raise SystemExit(f"DIII-D donor file not found: {D3D_EDDY}")
+
+    if use_champion:
+        d3d_path = D3D_CHAMPION
+        ver_prefix = "1.6.0"
+        d3d_label = "0.8.0 Grand Master 6-Member Ensemble"
+        d3d_desc = "Grand Master 6-member deep ensemble (`0.8.0_CRC_FEQ_grand_master_trajectory`)"
+        d3d_score_desc = "Composite $S = 0.994449$ ($R^2_\\psi = 0.999831$, Consistency $= 0.980795$, $D_{\\mathrm{LCFS}} = 0.010569$)"
+    elif d3d_source:
+        d3d_path = Path(d3d_source)
+        ver_prefix = "1.6.0"
+        d3d_label = f"Custom DIII-D ({d3d_path.name})"
+        d3d_desc = f"Custom DIII-D model from `{d3d_path}`"
+        d3d_score_desc = "Custom input"
+    else:
+        d3d_path = D3D_EDDY
+        ver_prefix = "1.5.0"
+        d3d_label = "Calibrated OSF Modal Model"
+        d3d_desc = "Full-fleet calibrated OSF modal model `d3d_0.0.17_fleet_full` with $W_{\\mathrm{eddy\\_dyn40}}$"
+        d3d_score_desc = "Composite $S = 0.962459$ ($R^2_\\psi = 0.992780$, Consistency $= 0.851367$, $D_{\\mathrm{LCFS}} = 0.026320$)"
+
+    if not d3d_path.is_file():
+        raise SystemExit(f"DIII-D donor file not found: {d3d_path}")
 
     print(f"Loading base MAST file from {MAST_BASE}...")
     mast_blob = np.load(MAST_BASE)
@@ -107,7 +136,7 @@ def package_calibrated_submission(
     print(f"Calibrated MAST q95 percentiles (p05 / median / p95): {perc['p05']:.3f} / {perc['median']:.3f} / {perc['p95']:.3f}")
 
     stamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
-    dest = out_dir or (BENCHMARKS_DIR / f"1.5.0_CRC_FEQ_osf_dual_champions_{stamp}")
+    dest = out_dir or (BENCHMARKS_DIR / f"{ver_prefix}_CRC_FEQ_osf_dual_champions_{stamp}")
     dest.mkdir(parents=True, exist_ok=True)
 
     mast_out = dest / "mast_public_test.npz"
@@ -115,8 +144,8 @@ def package_calibrated_submission(
     np.savez(mast_out, **mast_arrays)
 
     d3d_out = dest / "diii_d_public_test.npz"
-    print(f"Copying upgraded DIII-D predictions from {D3D_EDDY}...")
-    d3d_out.write_bytes(D3D_EDDY.read_bytes())
+    print(f"Copying upgraded DIII-D predictions from {d3d_path} ({d3d_label})...")
+    d3d_out.write_bytes(d3d_path.read_bytes())
 
     # Validation
     env = {
@@ -138,7 +167,8 @@ def package_calibrated_submission(
         "method": "CRC_FEQ_calibrated_dual_champions",
         "version": dest.name,
         "c_star": c_star,
-        "diii_d_source": str(D3D_EDDY),
+        "diii_d_label": d3d_label,
+        "diii_d_source": str(d3d_path),
         "diii_d_sha256": _sha256(d3d_out),
         "mast_source": str(MAST_BASE),
         "mast_sha256": _sha256(mast_out),
@@ -148,15 +178,13 @@ def package_calibrated_submission(
     (dest / "meta.json").write_text(json.dumps(meta, indent=2) + "\n")
 
     report = [
-        "# Calibrated Dual Champions Submission (v1.5.0)",
+        f"# Calibrated Dual Champions Submission ({ver_prefix})",
         "",
         "This package pairs both calibrated top-tier models for DIII-D and MAST:",
         "",
         "## 1. DIII-D Model",
-        "- **Architecture**: Full-fleet calibrated OSF modal model `d3d_0.0.17_fleet_full`",
-        "- **Enhancement**: Polarity-aware analytic Green basis $G_{\\mathrm{raw}}$ + 40-feature dynamic wall eddy matrix $W_{\\mathrm{eddy\\_dyn40}}$",
-        "- **Holdout Score**: Composite $S = 0.968650$ ($R^2_\\psi = 0.9942$, Consistency $= 0.8745$)",
-        "- **Codabench Score**: $S = 0.962459$, Gate Ratio $G_{\\mathrm{ratio}} = 0.592884$",
+        f"- **Architecture**: {d3d_desc}",
+        f"- **Benchmark Performance**: {d3d_score_desc}",
         "",
         "## 2. MAST Model",
         f"- **Calibration**: Leaderboard probe parabolic inversion optimal vertex $c^* = {c_star:.6f}$",
@@ -189,11 +217,19 @@ def package_calibrated_submission(
 def main() -> None:
     parser = argparse.ArgumentParser(description="Export and package calibrated MAST + DIII-D predictions.")
     parser.add_argument("--c-star", type=float, default=1.062242, help="Calibrated q95 multiplier (default: 1.062242)")
+    parser.add_argument("--d3d-champion", action="store_true", help="Use 0.8.0 Grand Master 6-member ensemble for DIII-D (S = 0.994449)")
+    parser.add_argument("--d3d-source", type=Path, default=None, help="Explicit path to DIII-D predictions .npz file")
     parser.add_argument("--push", action="store_true", help="Push to Hugging Face repository and build pointer")
     parser.add_argument("--out-dir", type=Path, default=None, help="Optional explicit output directory")
     args = parser.parse_args()
 
-    package_calibrated_submission(c_star=args.c_star, push=args.push, out_dir=args.out_dir)
+    package_calibrated_submission(
+        c_star=args.c_star,
+        push=args.push,
+        out_dir=args.out_dir,
+        d3d_source=args.d3d_source,
+        use_champion=args.d3d_champion,
+    )
 
 
 if __name__ == "__main__":
