@@ -37,11 +37,11 @@ This document tabulates all physical parameters, coordinate conventions, and cal
 | **$\lambda_o$** | Outboard pair scale | **$-0.18$** (P5 pair) | **$0.00$** (F7 pair) | Diverted scale $= 0.82$ on MAST |
 | **$\lambda_{S0}$** | Solenoid scale | **$0.50$** | **$1.00$** | Halves center-column well on MAST |
 | **$\lambda_{Sb}$** | Solenoid ohmic scale | **$+0.10$** | **$0.00$** | Ohmic end scale on MAST is $\lambda_S(1) = 0.60$ |
-| **$W_{\mathrm{ext}}$ model** | External field coupling | Static Green's filaments | **Dynamic $W_{\mathrm{ext\_dyn41}}$** | DIII-D uses 41-feature Ridge matrix to capture passive vessel eddy currents ($\dot{I}$) |
+| **$W_{\mathrm{ext}}$ model** | External field coupling | Static Green's filaments | **$G_{\mathrm{raw}} + W_{\mathrm{eddy\_dyn40}}$** | Polarity-aware analytic Green basis $G_{\mathrm{raw}}$ plus 40-feature dynamic vessel eddy matrix $W_{\mathrm{eddy}}$ (fallback to $W_{\mathrm{ext\_dyn41}}$) |
 | **$\alpha_q$** | Well factor ($h=1$) | **$0.55$** | **$1.00$** | Ohmic-well $q_{95}$ factor on MAST; unused on DIII-D ($h=0$) |
 | **$\eta_q$** | Diverted walk law | **$0.35$** | **$0.00$** | Late-walk $q_{95}$ multiplier on MAST |
 | **$\zeta_q$** | Hole amplitude | **$2.00$** | **$0.00$** | Added $q_{95}$ multiplier during divert approach on MAST |
-| **$q_{95}$ calibration** | Safety factor determination | **$1.20 \times q_{\mathrm{map}}$** | **Neural profile head** | MAST uses paramagnetic flux-surface integral; DIII-D uses trained MLP head |
+| **$q_{95}$ calibration** | Safety factor determination | **$1.20 \times q_{\mathrm{map}}$** (optimal $1.0622$) | **Neural profile head** | MAST uses paramagnetic flux-surface integral (optimal $c^*=1.0622$ recovered via Codabench parabolic probe); DIII-D uses trained MLP head |
 | **$\eta_\beta$** | Walk $\beta_N$ taper | **$0.20$** | **$0.00$** | Tapers hot midplane Thomson chords on MAST |
 | **$\beta_{\mathrm{lo}}$** | Lower $\beta_N$ clamp floor | **$0.20$** | **$0.01$** | DIII-D allows lower startup values |
 | **$\beta_{\mathrm{fb}}$** | Empty-Thomson fallback | **$1.30$** | **$0.53$** | Typical discharge median fallback |
