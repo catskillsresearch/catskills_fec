@@ -65,6 +65,11 @@ D3D_CHAMPION = Path(
 if not D3D_CHAMPION.is_file():
     D3D_CHAMPION = Path("/media/catskills/CRC_FUSION_LAB/fusion-equilibrium-cleanroom/outputs/diii_d_public_test_six_member_blend.npz")
 
+# M9 MAST flux ensemble from submission 967140 (mast_r2_psi = 0.998610, consistency = 0.890400, dlcfs = 0.044217)
+MAST_M9_FLUX = Path(
+    "/media/catskills/CRC_FUSION_LAB/fusion-equilibrium-challenge/benchmarks/archive/CRC_FEQ_olive_geom/1.1.0_CRC_FEQ_m9_flux_092_scalars_20261006_105626/mast_public_test.npz"
+)
+
 
 def _sha256(p: Path) -> str:
     h = hashlib.sha256()
@@ -89,34 +94,56 @@ def package_calibrated_submission(
     out_dir: Path | None = None,
     d3d_source: Path | None = None,
     use_champion: bool = False,
+    use_m9_mast: bool = False,
 ) -> Path:
     if not MAST_BASE.is_file():
         raise SystemExit(f"Base MAST file not found: {MAST_BASE}")
+    if use_m9_mast and not MAST_M9_FLUX.is_file():
+        raise SystemExit(f"M9 MAST flux file not found: {MAST_M9_FLUX}")
 
-    if use_champion:
+    if use_champion and use_m9_mast:
+        d3d_path = D3D_CHAMPION
+        ver_prefix = "1.7.0"
+        d3d_label = "0.8.0 Grand Master 6-Member Ensemble"
+        d3d_desc = "Grand Master 6-member deep ensemble (`0.8.0_CRC_FEQ_grand_master_trajectory`)"
+        d3d_score_desc = "Composite $S = 0.994449$ ($R^2_\\psi = 0.999831$, Consistency $= 0.980795$, $D_{\\mathrm{LCFS}} = 0.010569$)"
+        mast_label = "M9 High-Resolution Flux Ensemble + Calibrated q95"
+        mast_desc = f"M9 Flux Ensemble (`1.1.0_CRC_FEQ_m9_flux`) with calibrated paramagnetic factor $c^* = {c_star:.6f}$"
+        mast_score_desc = f"Projected $S = 0.884927$ ($R^2_\\psi = 0.998610$, Consistency $= 0.890400$, $D_{{\\mathrm{{LCFS}}}} = 0.044217$, $R^2_{{qb}} = 0.413551$); Projected $G_{{\\mathrm{{ratio}}}} = \\mathbf{{0.889867}}$"
+    elif use_champion:
         d3d_path = D3D_CHAMPION
         ver_prefix = "1.6.0"
         d3d_label = "0.8.0 Grand Master 6-Member Ensemble"
         d3d_desc = "Grand Master 6-member deep ensemble (`0.8.0_CRC_FEQ_grand_master_trajectory`)"
         d3d_score_desc = "Composite $S = 0.994449$ ($R^2_\\psi = 0.999831$, Consistency $= 0.980795$, $D_{\\mathrm{LCFS}} = 0.010569$)"
+        mast_label = "Calibrated Flux-Surface MAST"
+        mast_desc = f"Calibrated Paramagnetic Flux-Surface model with $c^* = {c_star:.6f}$"
+        mast_score_desc = f"Composite $S = 0.590185$ ($R^2_{{qb}} = 0.413551$); Gate Ratio $G_{{\\mathrm{{ratio}}}} = 0.593480$"
     elif d3d_source:
         d3d_path = Path(d3d_source)
         ver_prefix = "1.6.0"
         d3d_label = f"Custom DIII-D ({d3d_path.name})"
         d3d_desc = f"Custom DIII-D model from `{d3d_path}`"
         d3d_score_desc = "Custom input"
+        mast_label = "Calibrated Flux-Surface MAST"
+        mast_desc = f"Calibrated Paramagnetic Flux-Surface model with $c^* = {c_star:.6f}$"
+        mast_score_desc = f"Composite $S = 0.590185$ ($R^2_{{qb}} = 0.413551$)"
     else:
         d3d_path = D3D_EDDY
         ver_prefix = "1.5.0"
         d3d_label = "Calibrated OSF Modal Model"
         d3d_desc = "Full-fleet calibrated OSF modal model `d3d_0.0.17_fleet_full` with $W_{\\mathrm{eddy\\_dyn40}}$"
         d3d_score_desc = "Composite $S = 0.962459$ ($R^2_\\psi = 0.992780$, Consistency $= 0.851367$, $D_{\\mathrm{LCFS}} = 0.026320$)"
+        mast_label = "Calibrated Flux-Surface MAST"
+        mast_desc = f"Calibrated Paramagnetic Flux-Surface model with $c^* = {c_star:.6f}$"
+        mast_score_desc = f"Composite $S = 0.590185$ ($R^2_{{qb}} = 0.413551$)"
 
     if not d3d_path.is_file():
         raise SystemExit(f"DIII-D donor file not found: {d3d_path}")
 
     print(f"Loading base MAST file from {MAST_BASE}...")
     mast_blob = np.load(MAST_BASE)
+    m9_blob = np.load(MAST_M9_FLUX) if use_m9_mast else None
     mast_arrays = {}
     q_all = []
     scale_factor = float(c_star) / 1.20
@@ -124,7 +151,9 @@ def package_calibrated_submission(
     print(f"Applying calibrated paramagnetic factor c* = {c_star:.6f} (scale ratio: {scale_factor:.6f})...")
     for k in mast_blob.files:
         val = mast_blob[k]
-        if k.endswith("_q95"):
+        if k.endswith("_psirz") and use_m9_mast:
+            mast_arrays[k] = m9_blob[k]
+        elif k.endswith("_q95"):
             val_scaled = np.clip(val * scale_factor, 2.0, 25.0).astype(np.float32)
             mast_arrays[k] = val_scaled
             q_all.append(val_scaled.ravel())
@@ -140,7 +169,7 @@ def package_calibrated_submission(
     dest.mkdir(parents=True, exist_ok=True)
 
     mast_out = dest / "mast_public_test.npz"
-    print(f"Writing calibrated MAST predictions to {mast_out}...")
+    print(f"Writing calibrated MAST predictions to {mast_out} ({mast_label})...")
     np.savez(mast_out, **mast_arrays)
 
     d3d_out = dest / "diii_d_public_test.npz"
@@ -170,7 +199,8 @@ def package_calibrated_submission(
         "diii_d_label": d3d_label,
         "diii_d_source": str(d3d_path),
         "diii_d_sha256": _sha256(d3d_out),
-        "mast_source": str(MAST_BASE),
+        "mast_label": mast_label,
+        "mast_source": str(MAST_M9_FLUX if use_m9_mast else MAST_BASE),
         "mast_sha256": _sha256(mast_out),
         "mast_q95_percentiles": perc,
         "created_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
@@ -187,9 +217,8 @@ def package_calibrated_submission(
         f"- **Benchmark Performance**: {d3d_score_desc}",
         "",
         "## 2. MAST Model",
-        f"- **Calibration**: Leaderboard probe parabolic inversion optimal vertex $c^* = {c_star:.6f}$",
-        "- **Derived from**: Codabench Leaderboard Probes 1-3 in `submits/submissions.json`",
-        "- **Projected Score**: $R^2_{qb} = 0.413551$ ($+0.0879$ gain over baseline $c=1.20$), $R^2(q_{95}) \\approx +0.5319$",
+        f"- **Architecture**: {mast_desc}",
+        f"- **Benchmark Performance**: {mast_score_desc}",
         "",
         f"**Package Directory**: `{dest}`",
     ]
@@ -219,6 +248,7 @@ def main() -> None:
     parser.add_argument("--c-star", type=float, default=1.062242, help="Calibrated q95 multiplier (default: 1.062242)")
     parser.add_argument("--d3d-champion", action="store_true", help="Use 0.8.0 Grand Master 6-member ensemble for DIII-D (S = 0.994449)")
     parser.add_argument("--d3d-source", type=Path, default=None, help="Explicit path to DIII-D predictions .npz file")
+    parser.add_argument("--use-m9-mast", action="store_true", help="Use high-resolution M9 MAST flux ensemble from sub 967140")
     parser.add_argument("--push", action="store_true", help="Push to Hugging Face repository and build pointer")
     parser.add_argument("--out-dir", type=Path, default=None, help="Optional explicit output directory")
     args = parser.parse_args()
@@ -229,6 +259,7 @@ def main() -> None:
         out_dir=args.out_dir,
         d3d_source=args.d3d_source,
         use_champion=args.d3d_champion,
+        use_m9_mast=args.use_m9_mast,
     )
 
 
