@@ -105,9 +105,11 @@ def main():
     parser.add_argument("--lr", type=float, default=1e-3, help="Initial learning rate (default: 1e-3)")
     parser.add_argument("--workers", type=int, default=16, help="Process pool workers for loading (default: 16)")
     parser.add_argument("--no-cache", action="store_true", help="Force reload data without using consolidated cache")
+    parser.add_argument("--out-dir", type=Path, default=None, help="Explicit output directory for model weights and logs")
     args = parser.parse_args()
 
-    RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+    results_dir = args.out_dir or RESULTS_DIR
+    results_dir.mkdir(parents=True, exist_ok=True)
 
     print("=" * 75)
     print("=== DIII-D FULL FLEET CALIBRATION: MULTI-HEAD RES-MLP ===")
@@ -126,7 +128,12 @@ def main():
     train_keys = all_train_keys[args.n_val_shots :]
 
     # Load precomputed basis & W_ext
-    w_data = np.load(ROOT / "results" / "d3d_probe_100" / "weights.npz")
+    basis_path = ROOT / "results" / "d3d_probe_100" / "weights.npz"
+    if not basis_path.is_file():
+        basis_path = LAB_RESULTS / "weights.npz"
+    if not basis_path.is_file():
+        basis_path = ROOT / "results" / "d3d_0.0.17_fleet_full" / "weights.npz"
+    w_data = np.load(basis_path)
     basis = w_data["basis"] # (24, 3969)
     W_ext = w_data["W_ext"] # (20, 4225)
     P = load_response("d3")
@@ -233,7 +240,7 @@ def main():
     # 4. Training Loop with Early Stopping
     print(f"\n4. Beginning Training Loop (min {args.min_epochs}, max {args.max_epochs} epochs)...")
     best_val_loss = float("inf")
-    best_weights_path = RESULTS_DIR / "weights_best.pt"
+    best_weights_path = results_dir / "weights_best.pt"
     patience_counter = 0
     t_start = time.time()
 
@@ -297,7 +304,7 @@ def main():
 
     # Save scalers and basis bundle
     np.savez_compressed(
-        RESULTS_DIR / "weights.npz",
+        results_dir / "weights.npz",
         basis=basis,
         W_ext=W_ext,
         scaler_X_mean=scaler_X.mean_,
@@ -369,7 +376,7 @@ def main():
         elif isinstance(v_s, str):
             score_clean[k_s] = v_s
 
-    receipt_path = RESULTS_DIR / "receipt.json"
+    receipt_path = results_dir / "receipt.json"
     with open(receipt_path, "w") as f_out:
         json.dump(score_clean, f_out, indent=2)
 
@@ -475,7 +482,7 @@ def main():
             axis_r[t] = grid_R[ir]
             axis_z[t] = grid_Z[iz]
 
-        out_npz = RESULTS_DIR / f"{stem}.npz"
+        out_npz = results_dir / f"{stem}.npz"
         np.savez_compressed(
             out_npz,
             psirz=psi_tot.astype(np.float32),
@@ -489,7 +496,7 @@ def main():
             efit_grid_Z=grid_Z,
             model_id="d3d_0.0.17_fleet_full",
         )
-        print(f"Exported {stem}.npz to {RESULTS_DIR}")
+        print(f"Exported {stem}.npz to {results_dir}")
 
     print("\nFull fleet calibration and demo export completed successfully!")
 

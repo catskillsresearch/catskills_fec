@@ -9,6 +9,7 @@ Incorporates:
 - intercept
 Target: delta = psi_ext_true - (coils * pol) @ G_raw
 """
+import argparse
 import sys
 import time
 from pathlib import Path
@@ -24,6 +25,7 @@ from calibrate_probe_100 import COIL_INDICES
 from catskills.vac_calib import source_basis
 
 G_RAW = source_basis("d3", calibrated=False) # (19, 4225)
+LAB_RESULTS = Path("/media/catskills/CRC_FUSION_LAB/fusion-equilibrium-challenge/results/d3d_0.0.17_fleet_full")
 
 
 def load_shot_eddy(k: str):
@@ -54,13 +56,20 @@ def load_shot_eddy(k: str):
 
 
 def main():
-    keys = sample_cache_keys(7080, seed=42)
-    hold_keys = keys[:80]
-    train_keys = keys[80:1080] # 1,000 training shots
+    parser = argparse.ArgumentParser(description="Fit dynamic eddy matrix W_eddy_dyn40")
+    parser.add_argument("--n-shots", type=int, default=1000, help="Number of training shots (default: 1000)")
+    parser.add_argument("--n-holdout", type=int, default=80, help="Number of holdout shots (default: 80)")
+    parser.add_argument("--workers", type=int, default=16, help="Process pool workers (default: 16)")
+    parser.add_argument("--out", type=Path, default=None, help="Explicit output path for W_eddy_dyn40.npz")
+    args = parser.parse_args()
 
-    print("Loading 1,000 training shots with 16 workers...")
+    keys = sample_cache_keys(7080, seed=42)
+    hold_keys = keys[:args.n_holdout]
+    train_keys = keys[80 : 80 + args.n_shots]
+
+    print(f"Loading {len(train_keys)} training shots with {args.workers} workers...")
     t0 = time.time()
-    with ProcessPoolExecutor(max_workers=16) as ex:
+    with ProcessPoolExecutor(max_workers=args.workers) as ex:
         res = list(ex.map(load_shot_eddy, train_keys))
     res = [r for r in res if r is not None]
     print(f"Loaded {len(res)} shots in {time.time() - t0:.2f} s")
@@ -69,9 +78,9 @@ def main():
     all_delta = np.concatenate([r[1] for r in res], axis=0)
     print(f"Total training frames: {len(all_feats):,}, feature shape: {all_feats.shape}")
 
-    # Load 80 holdout shots to validate alpha
-    print("Loading 80 holdout shots...")
-    with ProcessPoolExecutor(max_workers=16) as ex:
+    # Load holdout shots to validate alpha
+    print(f"Loading {len(hold_keys)} holdout shots...")
+    with ProcessPoolExecutor(max_workers=args.workers) as ex:
         h_res = list(ex.map(load_shot_eddy, hold_keys))
     h_res = [r for r in h_res if r is not None]
     hold_feats = np.concatenate([r[0] for r in h_res], axis=0)
@@ -95,7 +104,8 @@ def main():
             best_alpha = alpha
 
     print(f"\nBest Alpha: {best_alpha} with Holdout R2: {best_r2:.6f}")
-    out_path = Path("results/d3d_0.0.17_fleet_full/W_eddy_dyn40.npz")
+    out_path = args.out or Path("results/d3d_0.0.17_fleet_full/W_eddy_dyn40.npz")
+    out_path.parent.mkdir(parents=True, exist_ok=True)
     np.savez_compressed(
         out_path,
         W_eddy=best_w.astype(np.float32),
@@ -104,6 +114,18 @@ def main():
         r2_holdout=best_r2,
     )
     print(f"Saved optimized dynamic eddy matrix to {out_path}")
+    if LAB_RESULTS.is_dir() and out_path != (LAB_RESULTS / "W_eddy_dyn40.npz"):
+        try:
+            np.savez_compressed(
+                LAB_RESULTS / "W_eddy_dyn40.npz",
+                W_eddy=best_w.astype(np.float32),
+                G_raw=G_RAW.astype(np.float32),
+                alpha=best_alpha,
+                r2_holdout=best_r2,
+            )
+            print(f"Synced to lab results: {LAB_RESULTS / 'W_eddy_dyn40.npz'}")
+        except Exception as e:
+            print(f"Notice: could not sync to lab results: {e}")
 
 
 if __name__ == "__main__":

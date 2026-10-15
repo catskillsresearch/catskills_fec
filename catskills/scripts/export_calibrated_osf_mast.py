@@ -168,6 +168,15 @@ def package_calibrated_submission(
     (dest / "REPORT.md").write_text("\n".join(report) + "\n")
     print(f"\nPackage generated successfully at: {dest}")
 
+    try:
+        from feq.labdisk import OUTPUTS
+        if OUTPUTS.is_dir():
+            shutil.copy2(d3d_out, OUTPUTS / "diii_d_public_test.npz")
+            shutil.copy2(mast_out, OUTPUTS / "mast_public_test.npz")
+            print(f"Updated live outputs in {OUTPUTS}")
+    except Exception as e:
+        print(f"Note: Could not update OUTPUTS: {e}")
+
     if push:
         push_script = ROOT / "catskills" / "scripts" / "push_hf_submission.sh"
         print(f"Invoking push script: {push_script} {dest}")
