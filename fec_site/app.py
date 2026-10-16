@@ -165,7 +165,10 @@ def mast_home() -> bytes:
         _crumb(("/mast", "MAST"))
         + "<h1>MAST data</h1>"
         + '<p class="lead">1,206 input-only public-test rows.</p>'
-        + _buttons([("/mast/test", "Unlabelled test shots")]),
+        + _buttons([
+            ("/mast/test", "Unlabelled test shots"),
+            ("http://127.0.0.1:8775", "Interactive Equilibrium Explorer (Live 32-Parameter Sliders)"),
+        ]),
     )
 
 
