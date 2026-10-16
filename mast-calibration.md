@@ -152,3 +152,8 @@ $$R^2_{qb}(c) = -4.633088\,c^2 + 9.842918\,c - 4.814228$$
 $$\text{Optimal Vertex: } c^* = -\frac{B}{2A} = \mathbf{1.062242}$$
 
 At the optimal vertex $c^* = 1.0622$, projected $R^2_{qb}$ peaks at $\mathbf{0.413551}$ (a gain of $\mathbf{+0.087924}$ over baseline $c=1.20$), lifting fleet $R^2(q_{95})$ from $+0.356082 \to \mathbf{+0.531930}$ across all 69,075 MAST public test frames.
+
+### Complete Search Space & Literature Enclosure
+
+For the complete specification of the active slider search space, enclosing $[\text{Min}, \text{Max}]$ ranges, defaults, step sizes, and the literature citations locking down non-searchable machine and physics parameters, see [MAST Calibration Search Space](mast-calibration-search-space.md).
+

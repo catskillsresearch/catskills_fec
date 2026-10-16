@@ -99,3 +99,9 @@ Five leaderboard probes scored on Codabench calibrated the profile readout param
 - **$s_\beta$ ($\beta_N$ Multiplier)**: On Oct 16, 2026, 3-point parabolic sensitivity across Shots 04 ($s_\beta=0.85 \implies R^2_{qb}=0.385411$), 05 ($s_\beta=1.00 \implies R^2_{qb}=0.413551$), and 03 ($s_\beta=1.15 \implies R^2_{qb}=0.414194$) solved the quadratic response $R^2_{qb}(s_\beta) = -0.611044 s_\beta^2 + 1.318032 s_\beta - 0.293437$, yielding the optimal vertex $s_\beta^* = 1.078508$ ($+7.85\%$ boost to $\beta_N$), projecting $R^2_{qb} = 0.417317$, $S_{\mathrm{MAST}} = 0.885688$, and $G_{\mathrm{ratio}} = 0.890637$.
 - **$\eta_\beta$**: Perturbation to $0.22$ yielded negative score gradient $\partial R^2_{qb}/\partial\eta_\beta = -0.0566 < 0$, confirming baseline $\eta_\beta = 0.20$.
 - **$\zeta_q$**: Perturbation to $2.20$ yielded steep negative score gradient $\partial R^2_{qb}/\partial\zeta_q = -0.2123 < 0$, confirming baseline $\zeta_q \le 2.00$.
+
+---
+
+## Active Search Space & Enclosing Sliders
+For the complete enclosing $[\text{Min}, \text{Max}]$ search space, grid step sizes, defaults, and literature citations locking down non-searchable parameters, see [MAST Equilibrium Calibration Search Space](mast-calibration-search-space.md).
+
