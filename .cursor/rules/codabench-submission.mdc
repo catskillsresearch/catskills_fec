@@ -1,0 +1,46 @@
+---
+description: Codabench submissions use Route A (HF pointer) by default
+alwaysApply: true
+---
+
+# Codabench submission — Route A (HF) default
+
+**Default for this team:** push predictions to the private Hugging Face repo, then upload
+`submission_pointer.zip` to Codabench. Faster than uploading multi‑GB `.npz` files through
+Codabench storage.
+
+## Route A (what to ship)
+
+After packaging, push and submit:
+
+```bash
+./catskills/scripts/push_hf_submission.sh [attempt-dir]
+# or for solver builds:
+.venv/bin/python -m catskills.scripts.solver_submit [--skip-package --attempt-dir DIR]
+```
+
+Upload to Codabench:
+
+```
+<attempt-dir>/submission_pointer.zip
+```
+
+The pointer zip contains `manifest.json` with `{repo_id, revision, token}` pointing at the
+pinned HF commit. Predictions stay in the private HF repo.
+
+When packaging completes, give the user the push command and the path to
+`submission_pointer.zip`. Run the HF push proactively when they ask to submit.
+
+## Route B (explicit opt-in only)
+
+`direct_submission.zip` — self-contained archive with both `.npz` at the root. Use only when
+the user explicitly asks for direct upload or Route B.
+
+## Validate before push
+
+```bash
+.venv/bin/python validate_submission.py <attempt-dir>/diii_d_public_test.npz --config diii_d_public_test
+.venv/bin/python validate_submission.py <attempt-dir>/mast_public_test.npz --config mast_public_test
+```
+
+See `catskills/SUBMISSION.md` for the full contract.

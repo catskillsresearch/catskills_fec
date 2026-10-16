@@ -1,0 +1,15 @@
+---
+description: Representation-capacity-first experiment policy for fusion equilibrium work
+alwaysApply: true
+---
+
+# Representation capacity first
+
+Before spending a full training campaign (GPU-day or week) on any new model family:
+
+1. **Ceiling / existence first.** Prove the *representation* can carry the metric of interest on a small set of frames with GT or oracle conditioning (prescribed boundary, GT labels, short Adam / closed-form fit). If the ceiling fails, kill the thesis — do not scale data or capacity.
+2. **Small data, limited wall-clock.** Progress probes use a tiny subset and a hard time budget (e.g. 2 hours) before any deeper pursuit. A short climb that does not move Cons (or the named kill metric) is a STALL/MISS, not a reason to overnight-train.
+3. **Replan after the probe.** Do not auto-start the long campaign from a progress script. Read the receipt, then decide.
+4. **No Codabench / package** from existence or progress probes. Ship only after the week-scale kill bar clears and the house public projection bar is met.
+
+This is the standing policy for Challenge and cleanroom experiment lines (separatrix, Flux1, Picard, Operator, boundary heads, etc.).

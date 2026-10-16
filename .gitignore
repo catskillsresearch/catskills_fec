@@ -49,3 +49,37 @@ direct_submission.zip
 
 # Runtime logs
 *.log
+
+# Legacy campaign artifacts, scratch, and session logs
+clean_session.md
+session.json
+challengers.txt
+crc_fusion_lab.env
+mnn1.txt
+catskills.jpeg
+8hr.sh
+mlp2a-trainctl.sh
+trainctl.sh
+poetry.lock
+path1_*results*.json
+path2_*results*.json
+path*_results*.json
+leaderboard_snapshot_latest.json
+generate_*_plot.py
+generate_empirical_pdf.py
+generate_top50_movement.py
+
+# Legacy color campaigns, models, reports, research, and tests
+catskills_submissions/
+models/
+reports/
+research/
+tests/
+scripts/
+catskills/probes/
+catskills/*.md
+!catskills/COLOR_LEDGER.md
+catskills/*.py
+catskills/scripts/*
+!catskills/scripts/export_calibrated_osf_d3d.py
+

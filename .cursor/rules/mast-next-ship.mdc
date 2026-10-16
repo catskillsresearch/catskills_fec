@@ -1,0 +1,24 @@
+---
+description: Next ship must reuse the 0.9.1 MAST paramagnetic q95 upload and verify it first. DIII-D is separate.
+alwaysApply: true
+---
+
+# MAST next ship — use the 0.9.1 upload
+
+The MAST half of the next package is the paramagnetic flux-surface q95 already uploaded. Do not rebuild MAST q95, do not revert it to 2.40×q* or the unscaled integral, and do not copy this recipe onto DIII-D.
+
+Pinned upload:
+
+- Attempt: `/media/catskills/CRC_FUSION_LAB/fusion-equilibrium-challenge/benchmarks/CRC_FEQ_olive_geom/0.9.1_CRC_FEQ_mast_paramagnetic_q95_20261004_180504/`
+- Hugging Face commit: `43cdb4d67877706e67ff9bbfde30216307dbf2eb`
+- Live file: `/media/catskills/CRC_FUSION_LAB/fusion-equilibrium-cleanroom/outputs/mast_public_test.npz`
+
+Before packaging or pushing the next ship, check that `mast_public_test.npz` is this upload. Stop if any check fails.
+
+1. q95 matches the 0.9.1 pack. Fleet percentiles on 69,075 frames: p05 / median / p95 = 4.517 / 6.543 / 13.424.
+2. βN is untouched: 0.460 / 1.289 / 2.936.
+3. `psirz` matches the 0.9.1 pack at float16. Flux was not rewritten.
+4. `.venv/bin/python validate_submission.py` on the MAST file with `--config mast_public_test` is OK.
+5. Labeled reference on shots 28348, 28350, 28351 (115 flattop frames): R²(q95) = +0.427, R²(βN) = +0.071, R²qb = +0.249. That is the 1.20× map integral, not a new fit.
+
+DIII-D is not this upload. Leave `diii_d_public_test.npz` on the un-tilted six-member blend (0.8.0 pack, holdout S = 0.995769).
