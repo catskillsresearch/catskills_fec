@@ -2,12 +2,687 @@
   "source": "https://www.codabench.org/competitions/17739/#/participate-tab",
   "api": "https://www.codabench.org/api/submissions/?phase={phase}&page_size=all",
   "owner": "catskills",
-  "downloaded": "2026-10-15",
+  "downloaded": "2026-10-16",
   "phases": {
     "Development": {
       "phase_id": 29580,
-      "count": 50,
+      "count": 55,
       "results": [
+        {
+          "phase_name": "Development",
+          "name": "",
+          "filename": "05_HIGHEST_CHAMPION_anchor_c106_b10.zip",
+          "description": "",
+          "created_when": "2026-10-16T09:40:34.766389Z",
+          "is_public": false,
+          "is_specific_task_re_run": false,
+          "status": "Finished",
+          "status_details": "scoring_hostname-ousaisrvr",
+          "owner": "catskills",
+          "has_children": false,
+          "parent": null,
+          "children": [],
+          "pk": 992647,
+          "id": 992647,
+          "phase": 29580,
+          "scores": [
+            {
+              "id": 3073935,
+              "index": 0,
+              "score": "0.9944430000",
+              "column_key": "d3d_S",
+              "precision": 4,
+              "is_primary": true
+            },
+            {
+              "id": 3073945,
+              "index": 1,
+              "score": "0.8898710000",
+              "column_key": "g_ratio",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3073940,
+              "index": 2,
+              "score": "0.8849260000",
+              "column_key": "mast_S",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3073936,
+              "index": 3,
+              "score": "0.9998300000",
+              "column_key": "d3d_r2_psi",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3073937,
+              "index": 4,
+              "score": "0.9962700000",
+              "column_key": "d3d_r2_qb",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3073938,
+              "index": 5,
+              "score": "0.0105840000",
+              "column_key": "d3d_dlcfs",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3073939,
+              "index": 6,
+              "score": "0.9807700000",
+              "column_key": "d3d_consistency",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3073941,
+              "index": 7,
+              "score": "0.9986100000",
+              "column_key": "mast_r2_psi",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3073942,
+              "index": 8,
+              "score": "0.4135510000",
+              "column_key": "mast_r2_qb",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3073943,
+              "index": 9,
+              "score": "0.0442170000",
+              "column_key": "mast_dlcfs",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3073944,
+              "index": 10,
+              "score": "0.8904000000",
+              "column_key": "mast_consistency",
+              "precision": 4,
+              "is_primary": false
+            }
+          ],
+          "fact_sheet_answers": {
+            "code_url": "https://github.com/catskillsresearch/catskills_fec",
+            "method_name": "05_HIGHEST_CHAMPION_anchor_c106_b100",
+            "compute_light": false
+          },
+          "leaderboard": 19740,
+          "on_leaderboard": true,
+          "task": {
+            "id": 35328,
+            "name": "Development (public test)",
+            "description": "Scored on the public test fold (DIII-D + MAST). Continuous public leaderboard.",
+            "key": "860157b5-4d21-470d-8e7d-1fcf352ed45a",
+            "created_by": 74430,
+            "created_when": "2026-07-31T20:34:22.166040Z",
+            "is_public": false,
+            "ingestion_only_during_scoring": false,
+            "validated": false,
+            "input_data": null,
+            "ingestion_program": null,
+            "reference_data": "a7104ec2-998e-4ac6-a53d-c8721ddcdbf9",
+            "scoring_program": "2e60f4f2-1e44-462d-8d3a-4e7fcb73ebe8",
+            "shared_with": []
+          },
+          "auto_run": true,
+          "can_make_submissions_public": true,
+          "is_soft_deleted": false,
+          "participant_group_name": null
+        },
+        {
+          "phase_name": "Development",
+          "name": "",
+          "filename": "04_MAST_betaN_lower_b085_submission.zip",
+          "description": "",
+          "created_when": "2026-10-16T09:33:40.443774Z",
+          "is_public": false,
+          "is_specific_task_re_run": false,
+          "status": "Finished",
+          "status_details": "scoring_hostname-ousaisrvr",
+          "owner": "catskills",
+          "has_children": false,
+          "parent": null,
+          "children": [],
+          "pk": 992632,
+          "id": 992632,
+          "phase": 29580,
+          "scores": [
+            {
+              "id": 3073847,
+              "index": 0,
+              "score": "0.9944430000",
+              "column_key": "d3d_S",
+              "precision": 4,
+              "is_primary": true
+            },
+            {
+              "id": 3073857,
+              "index": 1,
+              "score": "0.8856260000",
+              "column_key": "g_ratio",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3073852,
+              "index": 2,
+              "score": "0.8807050000",
+              "column_key": "mast_S",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3073848,
+              "index": 3,
+              "score": "0.9998300000",
+              "column_key": "d3d_r2_psi",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3073849,
+              "index": 4,
+              "score": "0.9962700000",
+              "column_key": "d3d_r2_qb",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3073850,
+              "index": 5,
+              "score": "0.0105840000",
+              "column_key": "d3d_dlcfs",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3073851,
+              "index": 6,
+              "score": "0.9807700000",
+              "column_key": "d3d_consistency",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3073853,
+              "index": 7,
+              "score": "0.9986100000",
+              "column_key": "mast_r2_psi",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3073854,
+              "index": 8,
+              "score": "0.3854110000",
+              "column_key": "mast_r2_qb",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3073855,
+              "index": 9,
+              "score": "0.0442170000",
+              "column_key": "mast_dlcfs",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3073856,
+              "index": 10,
+              "score": "0.8904000000",
+              "column_key": "mast_consistency",
+              "precision": 4,
+              "is_primary": false
+            }
+          ],
+          "fact_sheet_answers": {
+            "code_url": "https://github.com/catskillsresearch/catskills_fec",
+            "method_name": "04_MAST_betaN_lower_b085",
+            "compute_light": false
+          },
+          "leaderboard": null,
+          "on_leaderboard": false,
+          "task": {
+            "id": 35328,
+            "name": "Development (public test)",
+            "description": "Scored on the public test fold (DIII-D + MAST). Continuous public leaderboard.",
+            "key": "860157b5-4d21-470d-8e7d-1fcf352ed45a",
+            "created_by": 74430,
+            "created_when": "2026-07-31T20:34:22.166040Z",
+            "is_public": false,
+            "ingestion_only_during_scoring": false,
+            "validated": false,
+            "input_data": null,
+            "ingestion_program": null,
+            "reference_data": "a7104ec2-998e-4ac6-a53d-c8721ddcdbf9",
+            "scoring_program": "2e60f4f2-1e44-462d-8d3a-4e7fcb73ebe8",
+            "shared_with": []
+          },
+          "auto_run": true,
+          "can_make_submissions_public": true,
+          "is_soft_deleted": false,
+          "participant_group_name": null
+        },
+        {
+          "phase_name": "Development",
+          "name": "",
+          "filename": "03_MAST_betaN_upper_b115_submission.zip",
+          "description": "",
+          "created_when": "2026-10-16T09:17:58.563546Z",
+          "is_public": false,
+          "is_specific_task_re_run": false,
+          "status": "Finished",
+          "status_details": "scoring_hostname-ousaisrvr",
+          "owner": "catskills",
+          "has_children": false,
+          "parent": null,
+          "children": [],
+          "pk": 992586,
+          "id": 992586,
+          "phase": 29580,
+          "scores": [
+            {
+              "id": 3073674,
+              "index": 0,
+              "score": "0.9944430000",
+              "column_key": "d3d_S",
+              "precision": 4,
+              "is_primary": true
+            },
+            {
+              "id": 3073684,
+              "index": 1,
+              "score": "0.8899690000",
+              "column_key": "g_ratio",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3073679,
+              "index": 2,
+              "score": "0.8850230000",
+              "column_key": "mast_S",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3073675,
+              "index": 3,
+              "score": "0.9998300000",
+              "column_key": "d3d_r2_psi",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3073676,
+              "index": 4,
+              "score": "0.9962700000",
+              "column_key": "d3d_r2_qb",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3073677,
+              "index": 5,
+              "score": "0.0105840000",
+              "column_key": "d3d_dlcfs",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3073678,
+              "index": 6,
+              "score": "0.9807700000",
+              "column_key": "d3d_consistency",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3073680,
+              "index": 7,
+              "score": "0.9986100000",
+              "column_key": "mast_r2_psi",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3073681,
+              "index": 8,
+              "score": "0.4141940000",
+              "column_key": "mast_r2_qb",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3073682,
+              "index": 9,
+              "score": "0.0442170000",
+              "column_key": "mast_dlcfs",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3073683,
+              "index": 10,
+              "score": "0.8904000000",
+              "column_key": "mast_consistency",
+              "precision": 4,
+              "is_primary": false
+            }
+          ],
+          "fact_sheet_answers": {
+            "code_url": "https://github.com/catskillsresearch/catskills_fec",
+            "method_name": "03_MAST_betaN_upper_b115",
+            "compute_light": false
+          },
+          "leaderboard": null,
+          "on_leaderboard": false,
+          "task": {
+            "id": 35328,
+            "name": "Development (public test)",
+            "description": "Scored on the public test fold (DIII-D + MAST). Continuous public leaderboard.",
+            "key": "860157b5-4d21-470d-8e7d-1fcf352ed45a",
+            "created_by": 74430,
+            "created_when": "2026-07-31T20:34:22.166040Z",
+            "is_public": false,
+            "ingestion_only_during_scoring": false,
+            "validated": false,
+            "input_data": null,
+            "ingestion_program": null,
+            "reference_data": "a7104ec2-998e-4ac6-a53d-c8721ddcdbf9",
+            "scoring_program": "2e60f4f2-1e44-462d-8d3a-4e7fcb73ebe8",
+            "shared_with": []
+          },
+          "auto_run": true,
+          "can_make_submissions_public": true,
+          "is_soft_deleted": false,
+          "participant_group_name": null
+        },
+        {
+          "phase_name": "Development",
+          "name": "",
+          "filename": "02_MAST_q95_lower_c100_submission_p.zip",
+          "description": "",
+          "created_when": "2026-10-16T02:48:48.662676Z",
+          "is_public": false,
+          "is_specific_task_re_run": false,
+          "status": "Finished",
+          "status_details": "scoring_hostname-ousaisrvr",
+          "owner": "catskills",
+          "has_children": false,
+          "parent": null,
+          "children": [],
+          "pk": 991716,
+          "id": 991716,
+          "phase": 29580,
+          "scores": [
+            {
+              "id": 3069867,
+              "index": 0,
+              "score": "0.9944430000",
+              "column_key": "d3d_S",
+              "precision": 4,
+              "is_primary": true
+            },
+            {
+              "id": 3069877,
+              "index": 1,
+              "score": "0.8871640000",
+              "column_key": "g_ratio",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3069872,
+              "index": 2,
+              "score": "0.8822340000",
+              "column_key": "mast_S",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3069868,
+              "index": 3,
+              "score": "0.9998300000",
+              "column_key": "d3d_r2_psi",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3069869,
+              "index": 4,
+              "score": "0.9962700000",
+              "column_key": "d3d_r2_qb",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3069870,
+              "index": 5,
+              "score": "0.0105840000",
+              "column_key": "d3d_dlcfs",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3069871,
+              "index": 6,
+              "score": "0.9807700000",
+              "column_key": "d3d_consistency",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3069873,
+              "index": 7,
+              "score": "0.9986100000",
+              "column_key": "mast_r2_psi",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3069874,
+              "index": 8,
+              "score": "0.3956020000",
+              "column_key": "mast_r2_qb",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3069875,
+              "index": 9,
+              "score": "0.0442170000",
+              "column_key": "mast_dlcfs",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3069876,
+              "index": 10,
+              "score": "0.8904000000",
+              "column_key": "mast_consistency",
+              "precision": 4,
+              "is_primary": false
+            }
+          ],
+          "fact_sheet_answers": {
+            "code_url": "https://github.com/catskillsresearch/catskills_fec",
+            "method_name": "02_MAST_q95_lower_c100_submission_pointer",
+            "compute_light": false
+          },
+          "leaderboard": null,
+          "on_leaderboard": false,
+          "task": {
+            "id": 35328,
+            "name": "Development (public test)",
+            "description": "Scored on the public test fold (DIII-D + MAST). Continuous public leaderboard.",
+            "key": "860157b5-4d21-470d-8e7d-1fcf352ed45a",
+            "created_by": 74430,
+            "created_when": "2026-07-31T20:34:22.166040Z",
+            "is_public": false,
+            "ingestion_only_during_scoring": false,
+            "validated": false,
+            "input_data": null,
+            "ingestion_program": null,
+            "reference_data": "a7104ec2-998e-4ac6-a53d-c8721ddcdbf9",
+            "scoring_program": "2e60f4f2-1e44-462d-8d3a-4e7fcb73ebe8",
+            "shared_with": []
+          },
+          "auto_run": true,
+          "can_make_submissions_public": true,
+          "is_soft_deleted": false,
+          "participant_group_name": null
+        },
+        {
+          "phase_name": "Development",
+          "name": "",
+          "filename": "01_MAST_q95_upper_c112_submission_p.zip",
+          "description": "",
+          "created_when": "2026-10-16T02:30:09.129568Z",
+          "is_public": false,
+          "is_specific_task_re_run": false,
+          "status": "Finished",
+          "status_details": "scoring_hostname-ousaisrvr",
+          "owner": "catskills",
+          "has_children": false,
+          "parent": null,
+          "children": [],
+          "pk": 991681,
+          "id": 991681,
+          "phase": 29580,
+          "scores": [
+            {
+              "id": 3069688,
+              "index": 0,
+              "score": "0.9944430000",
+              "column_key": "d3d_S",
+              "precision": 4,
+              "is_primary": true
+            },
+            {
+              "id": 3069698,
+              "index": 1,
+              "score": "0.8875400000",
+              "column_key": "g_ratio",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3069693,
+              "index": 2,
+              "score": "0.8826080000",
+              "column_key": "mast_S",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3069689,
+              "index": 3,
+              "score": "0.9998300000",
+              "column_key": "d3d_r2_psi",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3069690,
+              "index": 4,
+              "score": "0.9962700000",
+              "column_key": "d3d_r2_qb",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3069691,
+              "index": 5,
+              "score": "0.0105840000",
+              "column_key": "d3d_dlcfs",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3069692,
+              "index": 6,
+              "score": "0.9807700000",
+              "column_key": "d3d_consistency",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3069694,
+              "index": 7,
+              "score": "0.9986100000",
+              "column_key": "mast_r2_psi",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3069695,
+              "index": 8,
+              "score": "0.3980950000",
+              "column_key": "mast_r2_qb",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3069696,
+              "index": 9,
+              "score": "0.0442170000",
+              "column_key": "mast_dlcfs",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3069697,
+              "index": 10,
+              "score": "0.8904000000",
+              "column_key": "mast_consistency",
+              "precision": 4,
+              "is_primary": false
+            }
+          ],
+          "fact_sheet_answers": {
+            "code_url": "https://github.com/catskillsresearch/catskills_fec",
+            "method_name": "01_MAST_q95_upper_c112_submission_pointer",
+            "compute_light": false
+          },
+          "leaderboard": null,
+          "on_leaderboard": false,
+          "task": {
+            "id": 35328,
+            "name": "Development (public test)",
+            "description": "Scored on the public test fold (DIII-D + MAST). Continuous public leaderboard.",
+            "key": "860157b5-4d21-470d-8e7d-1fcf352ed45a",
+            "created_by": 74430,
+            "created_when": "2026-07-31T20:34:22.166040Z",
+            "is_public": false,
+            "ingestion_only_during_scoring": false,
+            "validated": false,
+            "input_data": null,
+            "ingestion_program": null,
+            "reference_data": "a7104ec2-998e-4ac6-a53d-c8721ddcdbf9",
+            "scoring_program": "2e60f4f2-1e44-462d-8d3a-4e7fcb73ebe8",
+            "shared_with": []
+          },
+          "auto_run": true,
+          "can_make_submissions_public": true,
+          "is_soft_deleted": false,
+          "participant_group_name": null
+        },
         {
           "phase_name": "Development",
           "name": "",
@@ -120,8 +795,8 @@
             "method_name": "1.5.0_CRC_FEQ_osf_dual_champions_20261015_131633",
             "compute_light": false
           },
-          "leaderboard": 19740,
-          "on_leaderboard": true,
+          "leaderboard": null,
+          "on_leaderboard": false,
           "task": {
             "id": 35328,
             "name": "Development (public test)",

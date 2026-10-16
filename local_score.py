@@ -69,7 +69,12 @@ LI_IDX = CONS_SCALARS.index("li")
 def load_shots(n_shots: int, skip: int) -> list[dict]:
     """Stream `n_shots` DIII-D training shots, keeping ψ and the two value scalars."""
     from datasets import load_dataset
-    ds = load_dataset(REPO_ID, "diii_d_train", split="train", streaming=True)
+    try:
+        from catskills.dataset_local import resolve_dataset_path
+        data_path = resolve_dataset_path()
+    except Exception:
+        data_path = REPO_ID
+    ds = load_dataset(data_path, "diii_d_train", split="train", streaming=True)
     out = []
     for i, row in enumerate(ds):
         if i < skip:

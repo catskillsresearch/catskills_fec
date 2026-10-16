@@ -183,9 +183,9 @@ def main():
         },
         {
             "num": 5,
-            "name": f"2.1.0_MIDNIGHT_SUB5_osf_modal_q112_{stamp}",
-            "d3d_type": "osf_modal",
-            "d3d_desc": "Calibrated OSF modal model d3d_0.0.17_fleet_full with W_eddy_dyn40",
+            "name": f"2.1.0_MIDNIGHT_SUB5_osf_modal_pure_scalars_q112_{stamp}",
+            "d3d_type": "osf_modal_scalars",
+            "d3d_desc": "Calibrated OSF modal model flux + 100% Pure DedicatedScalarNet (Sol 5b, R2_qb=0.9975)",
             "c_q": 1.120000,
             "s_beta": 1.0000,
             "mast_probe_role": "q95 Upper Bracket on M9 flux (c_q = 1.1200, s_beta = 1.00)",
@@ -223,6 +223,8 @@ def main():
         elif cfg["d3d_type"] == "osf_modal":
             shutil.copyfile(D3D_OSF_MODAL, d3d_out)
             d3d_sha = _sha256(d3d_out)
+        elif cfg["d3d_type"] == "osf_modal_scalars":
+            d3d_sha = inject_scalars_into_d3d(D3D_OSF_MODAL, d3d_out, blend_weight=1.0)
         else:
             raise ValueError(f"Unknown d3d_type: {cfg['d3d_type']}")
 
