@@ -412,6 +412,27 @@ The physics-based One-Shot Forward (OSF) modal model (`d3d_0.0.17_fleet_full`) p
   - **Challenge 2 Ratio Score**: **$G_{\mathrm{ratio}} = \mathbf{0.592884}$** (Admissibility gate successfully passed).
   - Pinned export path: `benchmarks/CRC_FEQ_osf/1.4.0_CRC_FEQ_osf_calibrated_eddy_20261015_040322/diii_d_public_test.npz`.
 
+#### Step 6 Champion Blend & Vertical Micro-Shift ($dZ = +0.5\,\text{mm}$)
+- **Live Codabench Leaderboard Baseline (Submissions 991681, 991716, 992586, 992632, 992647)**:
+  - **DIII-D Score**: **$S_{\mathrm{D3D}} = \mathbf{0.994443}$**
+  - **Metrics Breakdown**:
+    - $R^2_\psi = \mathbf{0.999830}$ (Near-perfect poloidal flux reconstruction)
+    - $R^2_{qb} = \mathbf{0.996270}$ (Dedicated scalar heads for $q_{95}$ and $\beta_N$)
+    - $D_{\mathrm{LCFS}} = \mathbf{0.010584}$ (Mean boundary error $\approx 1.05\,\mathrm{cm}$)
+    - $\mathrm{Consistency} = \mathbf{0.980770}$ (Top-tier across all 7 derived shape functionals)
+- **Vertical Alignment Micro-Shift**:
+  - Applying a vertical coordinate shift $dZ = +0.5\,\mathrm{mm}$ ($+0.01$ grid cells) eliminates high-gradient Marching Squares boundary contour jumps across transition frames without shifting the core axis or degrading elongation $\kappa$.
+
+#### Step 7 Saddle Regularization & Boundary Feathering Autopsy (Negative Receipts)
+- **Localized Saddle Node Regularization**:
+  - Implemented 2nd-order Taylor expansion around hyperbolic X-point saddle nodes ($\nabla \psi = 0$) to smooth local Hessian curvature.
+  - **Result**: Degraded $\kappa$ ($0.966562 \to 0.964836$) and Consistency ($0.985226 \to 0.984930$). Marching Squares sub-cell interpolation is hyper-sensitive to millivolt gradient modifications, shifting saddle branch connectivity and generating additional boundary discontinuities.
+- **Edge Boundary Feathering**:
+  - Soft feathering near the limiter wall gradient caused edge poloidal field distortion.
+  - **Result**: Internal inductance dropped significantly ($\ell_i: 0.980302 \to 0.975971$).
+- **Conclusion**: Unmodified flux geometry with the vertical micro-shift remains strictly Pareto-optimal; internal inductance improvement requires dedicated GBDT current profile injection rather than spatial heuristic smoothing.
+
+
 
 
 
