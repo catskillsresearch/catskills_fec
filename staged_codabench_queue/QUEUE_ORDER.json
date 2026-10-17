@@ -25,15 +25,15 @@
   },
   {
     "order": "03",
-    "name": "1.9.0_STAGE_QUEUE_03_d3d_halfshift_dz025_20261016_112354",
-    "clean_file": "03_D3D_halfshift_dz025_MAST_opt_submission_pointer.zip",
-    "d3d": "0.8.0 Ensemble Half-Shift (dZ = +0.25 mm) + Legacy Blend Scalars",
-    "mast": "MAST Optimal Vertex (c_q = 1.062242, s_beta = 1.078508)",
-    "expected_mast_r2_qb": 0.4173,
-    "projected_g_ratio": 0.8906,
-    "hf_revision": "595472b6b90acfcbcd5efb9623ca39b0f9c88baa",
-    "local_path": "/home/catskills/Desktop/catskills_fec/staged_codabench_queue/03_D3D_halfshift_dz025_MAST_opt_submission_pointer.zip",
-    "lab_path": "/media/catskills/CRC_FUSION_LAB/fusion-equilibrium-challenge/benchmarks/STAGED_CODABENCH_QUEUE/03_D3D_halfshift_dz025_MAST_opt_submission_pointer.zip"
+    "name": "1.9.0_STAGE_QUEUE_03_d3d_unshifted_mast_affine_betaN_20261017_035709",
+    "clean_file": "03_D3D_unshifted_MAST_affine_betaN_submission_pointer.zip",
+    "d3d": "Winning 0.8.0 Ensemble Unshifted Baseline (dZ = 0.0 mm) + Legacy Blend Scalars",
+    "mast": "M9 Flux + Optimal q95 (c_q = 1.062242) + Affine BetaN (beta = 0.85*beta + 0.20)",
+    "expected_mast_r2_qb": 0.44,
+    "projected_g_ratio": 0.895,
+    "hf_revision": "bc3ff649cfc299f76bcb63ce236d6860f14fe48d",
+    "local_path": "/home/catskills/Desktop/catskills_fec/staged_codabench_queue/03_D3D_unshifted_MAST_affine_betaN_submission_pointer.zip",
+    "lab_path": "/media/catskills/CRC_FUSION_LAB/fusion-equilibrium-challenge/benchmarks/STAGED_CODABENCH_QUEUE/03_D3D_unshifted_MAST_affine_betaN_submission_pointer.zip"
   },
   {
     "order": "04",
