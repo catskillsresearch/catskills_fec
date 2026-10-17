@@ -2,12 +2,282 @@
   "source": "https://www.codabench.org/competitions/17739/#/participate-tab",
   "api": "https://www.codabench.org/api/submissions/?phase={phase}&page_size=all",
   "owner": "catskills",
-  "downloaded": "2026-10-16",
+  "downloaded": "2026-10-17",
   "phases": {
     "Development": {
       "phase_id": 29580,
-      "count": 57,
+      "count": 59,
       "results": [
+        {
+          "phase_name": "Development",
+          "name": "",
+          "filename": "04_D3D_neg_dz020_MAST_opt_submissio.zip",
+          "description": "",
+          "created_when": "2026-10-17T13:21:38.660912Z",
+          "is_public": false,
+          "is_specific_task_re_run": false,
+          "status": "Finished",
+          "status_details": "scoring_hostname-ousaisrvr",
+          "owner": "catskills",
+          "has_children": false,
+          "parent": null,
+          "children": [],
+          "pk": 995780,
+          "id": 995780,
+          "phase": 29580,
+          "scores": [
+            {
+              "id": 3087549,
+              "index": 0,
+              "score": "0.9944490000",
+              "column_key": "d3d_S",
+              "precision": 4,
+              "is_primary": true
+            },
+            {
+              "id": 3087559,
+              "index": 1,
+              "score": "0.8904430000",
+              "column_key": "g_ratio",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3087554,
+              "index": 2,
+              "score": "0.8855000000",
+              "column_key": "mast_S",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3087550,
+              "index": 3,
+              "score": "0.9998310000",
+              "column_key": "d3d_r2_psi",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3087551,
+              "index": 4,
+              "score": "0.9962700000",
+              "column_key": "d3d_r2_qb",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3087552,
+              "index": 5,
+              "score": "0.0105710000",
+              "column_key": "d3d_dlcfs",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3087553,
+              "index": 6,
+              "score": "0.9807920000",
+              "column_key": "d3d_consistency",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3087555,
+              "index": 7,
+              "score": "0.9986100000",
+              "column_key": "mast_r2_psi",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3087556,
+              "index": 8,
+              "score": "0.4173780000",
+              "column_key": "mast_r2_qb",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3087557,
+              "index": 9,
+              "score": "0.0442170000",
+              "column_key": "mast_dlcfs",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3087558,
+              "index": 10,
+              "score": "0.8904000000",
+              "column_key": "mast_consistency",
+              "precision": 4,
+              "is_primary": false
+            }
+          ],
+          "fact_sheet_answers": {
+            "code_url": "https://github.com/catskillsresearch/catskills_fec",
+            "method_name": "04_D3D_neg_dz020_MAST_opt",
+            "compute_light": false
+          },
+          "leaderboard": 19740,
+          "on_leaderboard": true,
+          "task": {
+            "id": 35328,
+            "name": "Development (public test)",
+            "description": "Scored on the public test fold (DIII-D + MAST). Continuous public leaderboard.",
+            "key": "860157b5-4d21-470d-8e7d-1fcf352ed45a",
+            "created_by": 74430,
+            "created_when": "2026-07-31T20:34:22.166040Z",
+            "is_public": false,
+            "ingestion_only_during_scoring": false,
+            "validated": false,
+            "input_data": null,
+            "ingestion_program": null,
+            "reference_data": "a7104ec2-998e-4ac6-a53d-c8721ddcdbf9",
+            "scoring_program": "2e60f4f2-1e44-462d-8d3a-4e7fcb73ebe8",
+            "shared_with": []
+          },
+          "auto_run": true,
+          "can_make_submissions_public": true,
+          "is_soft_deleted": false,
+          "participant_group_name": null
+        },
+        {
+          "phase_name": "Development",
+          "name": "",
+          "filename": "03_D3D_unshifted_MAST_affine_betaN_.zip",
+          "description": "",
+          "created_when": "2026-10-17T04:00:30.374908Z",
+          "is_public": false,
+          "is_specific_task_re_run": false,
+          "status": "Finished",
+          "status_details": "scoring_hostname-ousaisrvr",
+          "owner": "catskills",
+          "has_children": false,
+          "parent": null,
+          "children": [],
+          "pk": 994946,
+          "id": 994946,
+          "phase": 29580,
+          "scores": [
+            {
+              "id": 3083742,
+              "index": 0,
+              "score": "0.9944490000",
+              "column_key": "d3d_S",
+              "precision": 4,
+              "is_primary": true
+            },
+            {
+              "id": 3083752,
+              "index": 1,
+              "score": "0.8888570000",
+              "column_key": "g_ratio",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3083747,
+              "index": 2,
+              "score": "0.8839230000",
+              "column_key": "mast_S",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3083743,
+              "index": 3,
+              "score": "0.9998310000",
+              "column_key": "d3d_r2_psi",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3083744,
+              "index": 4,
+              "score": "0.9962700000",
+              "column_key": "d3d_r2_qb",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3083745,
+              "index": 5,
+              "score": "0.0105690000",
+              "column_key": "d3d_dlcfs",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3083746,
+              "index": 6,
+              "score": "0.9807950000",
+              "column_key": "d3d_consistency",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3083748,
+              "index": 7,
+              "score": "0.9986100000",
+              "column_key": "mast_r2_psi",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3083749,
+              "index": 8,
+              "score": "0.4068640000",
+              "column_key": "mast_r2_qb",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3083750,
+              "index": 9,
+              "score": "0.0442170000",
+              "column_key": "mast_dlcfs",
+              "precision": 4,
+              "is_primary": false
+            },
+            {
+              "id": 3083751,
+              "index": 10,
+              "score": "0.8904000000",
+              "column_key": "mast_consistency",
+              "precision": 4,
+              "is_primary": false
+            }
+          ],
+          "fact_sheet_answers": {
+            "code_url": "https://github.com/catskillsresearch/catskills_fec",
+            "method_name": "03_D3D_unshifted_MAST_affine_betaN",
+            "compute_light": false
+          },
+          "leaderboard": null,
+          "on_leaderboard": false,
+          "task": {
+            "id": 35328,
+            "name": "Development (public test)",
+            "description": "Scored on the public test fold (DIII-D + MAST). Continuous public leaderboard.",
+            "key": "860157b5-4d21-470d-8e7d-1fcf352ed45a",
+            "created_by": 74430,
+            "created_when": "2026-07-31T20:34:22.166040Z",
+            "is_public": false,
+            "ingestion_only_during_scoring": false,
+            "validated": false,
+            "input_data": null,
+            "ingestion_program": null,
+            "reference_data": "a7104ec2-998e-4ac6-a53d-c8721ddcdbf9",
+            "scoring_program": "2e60f4f2-1e44-462d-8d3a-4e7fcb73ebe8",
+            "shared_with": []
+          },
+          "auto_run": true,
+          "can_make_submissions_public": true,
+          "is_soft_deleted": false,
+          "participant_group_name": null
+        },
         {
           "phase_name": "Development",
           "name": "",
@@ -120,8 +390,8 @@
             "method_name": "02_D3D_unshifted_dz00_MAST_opt",
             "compute_light": false
           },
-          "leaderboard": 19740,
-          "on_leaderboard": true,
+          "leaderboard": null,
+          "on_leaderboard": false,
           "task": {
             "id": 35328,
             "name": "Development (public test)",
