@@ -18,11 +18,11 @@
 | **MAST $S$** | `mast_S` | High | **0.885500** | **#4** / 146 | 0 | `yszhang` | 0.951068 | **Top-4 in the World** |
 | **Ch2: $G_{\mathrm{ratio}}$** | `g_ratio` | High | **0.890443** | **#5** / 146 | 0 | `yszhang` | 0.978094 | **Top-5 in the World** ($20,000 Award #2 Contender) |
 | **MAST $R^2_{q_{95}+\beta_N}$**| `mast_r2_qb` | High | **0.417378** | **#27** / 146 | 0 | `yszhang` | 0.807598 | Optimal Parabolic Vertex on Zero-Shot Scalers |
-| **D3D $R^2_\psi$** | `d3d_r2_psi` | High | **0.999831** | **#33** / 146 | 0 | `xiaoxiao5503` | 0.999946 | Elite 99.98% Flux Field Accuracy |
-| **D3D Consistency** | `d3d_consistency`| High | **0.980795** | **#36** / 146 | 0 | `xiaoxiao5503` | 0.989745 | High Geometric Symmetry & Shape Fidelity |
-| **Ch1: DIII-D $S$** | `d3d_S` | High | **0.994449** | **#37** / 146 | 0 | `xiaoxiao5503` | 0.996998 | Safely Clears 0.85 Award Gate by +0.1444 |
-| **D3D $D_{\mathrm{LCFS}}$** | `d3d_dlcfs` | Low | **0.010569** | **#39** (Legit)\* | 0 | `yangyiliu` | 0.006290 | Sub-centimeter Separatrix Alignment (10.5 mm) |
-| **D3D $R^2_{q_{95}+\beta_N}$** | `d3d_r2_qb` | High | **0.996270** | **#45** / 146 | 0 | `xiaoxiao5503` | 0.998700 | Tight Profile Scalar Reconstruction |
+| **D3D $R^2_\psi$** | `d3d_r2_psi` | High | **0.999831** | **~#35** | 0 | `xiaoxiao5503` | 0.999946 | Elite 99.98% Flux Field Accuracy |
+| **D3D Consistency** | `d3d_consistency`| High | **0.980795** | **~#38** | 0 | `xiaoxiao5503` | 0.989745 | High Geometric Symmetry & Shape Fidelity |
+| **Ch1: DIII-D $S$** | `d3d_S` | High | **0.994449** | **#42** | 0 | `xiaoxiao5503` | 0.996998 | Safely Clears 0.85 Award Gate by +0.1444 |
+| **D3D $D_{\mathrm{LCFS}}$** | `d3d_dlcfs` | Low | **0.010569** | **~#41** | 0 | `yangyiliu` | 0.006290 | Sub-centimeter Separatrix Alignment (10.5 mm) |
+| **D3D $R^2_{q_{95}+\beta_N}$** | `d3d_r2_qb` | High | **0.996270** | **~#48** | 0 | `xiaoxiao5503` | 0.998700 | Tight Profile Scalar Reconstruction |
 
 *\*Note on $D_{\mathrm{LCFS}}$ ranking: Raw platform sorting places 20 dummy submissions with `0.000000` (entries where scoring failed or produced zero valid contours) ahead on MAST, and 4 on DIII-D. Filtering to genuine scored equilibria, Catskills ranks #2 on MAST and #39 on DIII-D.*
 
@@ -67,9 +67,9 @@ Catskills is an elite global contender on Challenge 2.
 Catskills holds a rock-solid, production-grade reconstruction on DIII-D.
 
 ### DIII-D Metric Standing
-- **Composite Score $S_{\mathrm{D3D}}$: `0.994449` (Rank #37)**:
-  - The top of the DIII-D board is extremely compressed: #1 `xiaoxiao5503` sits at `0.996998`.
-  - The entire gap from #1 to #37 is only **0.0025** ($0.25\%$).
+- **Composite Score $S_{\mathrm{D3D}}$: `0.994449` (Rank ~#42)**:
+  - The top of the DIII-D board is hyper-compressed: #1 `xiaoxiao5503` sits at `0.996998`.
+  - The entire gap from #1 to #42 is only **0.0025** ($0.25\%$).
 - **Award #2 Qualification Gate**:
   - The competition requires $S_{\mathrm{D3D}} \ge 0.8500$ to be eligible for Award #2 ($G_{\mathrm{ratio}}$ prize).
   - Catskills clears this gate with massive margin ($+0.1444$).
