@@ -75,11 +75,14 @@ models/
 reports/
 research/
 tests/
-scripts/
+/scripts/
 catskills/probes/
 catskills/*.md
 !catskills/COLOR_LEDGER.md
-catskills/*.py
-catskills/scripts/*
+# catskills/*.py
+# catskills/scripts/*
 !catskills/scripts/export_calibrated_osf_d3d.py
+!catskills/scripts/push_hf_submission.sh
+!catskills/scripts/generate_final_predictions.py
+
 

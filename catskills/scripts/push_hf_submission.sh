@@ -25,10 +25,10 @@ LAB="${CATSKILLS_FUSION_LAB:-/media/catskills/CRC_FUSION_LAB/fusion-equilibrium-
 if [[ $# -ge 1 ]]; then
   ATTEMPT_DIR="$1"
 else
-  ATTEMPT_DIR="$(find "$LAB/benchmarks" -maxdepth 3 -name diii_d_public_test.npz -printf '%T@ %h\n' \
+  ATTEMPT_DIR="$(find "$LAB/benchmarks" -maxdepth 3 \( -name diii_d_private_test.npz -o -name diii_d_public_test.npz \) -printf '%T@ %h\n' \
     | sort -rn | head -1 | cut -d' ' -f2-)"
   if [[ -z "$ATTEMPT_DIR" ]]; then
-    echo "ERROR: no attempt directory with diii_d_public_test.npz under $LAB/benchmarks" >&2
+    echo "ERROR: no attempt directory with test .npz under $LAB/benchmarks" >&2
     exit 1
   fi
   echo "Latest attempt: $ATTEMPT_DIR"

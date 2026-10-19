@@ -54,6 +54,8 @@ import zipfile
 import sys
 from pathlib import Path
 
+from catskills.lab_paths import configure_lab
+
 CONFIG_FILENAMES = [
     "diii_d_public_test.npz", "mast_public_test.npz",
     "diii_d_private_test.npz", "mast_private_test.npz",
@@ -190,8 +192,13 @@ def push_and_write_pointer(repo: str, read_token: str | None, sub_dir: Path,
               f"         private in the repo settings, or using a fresh --repo name.\n")
 
     print("Uploading (this is the slow part, but it only happens once per submission)...")
-    commit = api.upload_folder(folder_path=str(sub_dir), repo_id=repo,
-                               repo_type="dataset", allow_patterns=["*.npz"])
+    commit = api.upload_folder(
+        folder_path=str(sub_dir),
+        repo_id=repo,
+        repo_type="dataset",
+        allow_patterns=["*.npz"],
+        delete_patterns=["*.npz"],
+    )
     sha = commit.oid
     if not (len(sha) == 40 and all(c in "0123456789abcdef" for c in sha.lower())):
         print(f"ERROR: expected a 40-character commit SHA, got {sha!r}", file=sys.stderr)
@@ -233,6 +240,7 @@ def push_and_write_pointer(repo: str, read_token: str | None, sub_dir: Path,
 
 
 def main() -> int:
+    configure_lab()
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--repo", required=True,

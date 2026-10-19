@@ -31,18 +31,22 @@ from pathlib import Path
 
 import numpy as np
 
+from catskills.lab_paths import configure_lab
 from catskills.validation_ref import CONFIG_POOL_SPLIT, shot_frame_counts
 
 REPO_ID = "Sophelio/fusion-equilibrium-challenge"
+FINAL_REPO_ID = "ganatma/fusion-equilibrium-challenge-final"
 # Native flux grid per machine (rows = Z, cols = R).
 GRID = {"DIII-D": (65, 65), "MAST": (65, 65)}
 # The only two submitted scalars (metric v2): q95 needs F(psi), betaN needs p(psi) — neither is
 # in psi(R,Z). Every other scalar is derived from your submitted flux map by the scorer.
 SCALARS = ["q95", "betaN"]
-# config -> (split, machine). One public-test config = one machine.
+# config -> (split, machine, repo_id).
 CONFIG_INFO = {
-    "diii_d_public_test": ("public_test", "DIII-D"),
-    "mast_public_test": ("public_test", "MAST"),
+    "diii_d_public_test": ("public_test", "DIII-D", REPO_ID),
+    "mast_public_test": ("public_test", "MAST", REPO_ID),
+    "diii_d_private_test": ("private_test", "DIII-D", FINAL_REPO_ID),
+    "mast_private_test": ("private_test", "MAST", FINAL_REPO_ID),
 }
 
 
@@ -115,7 +119,7 @@ def _check_shot(
 
 
 def validate(npz_path: Path, config: str, max_shots: int, *, ref: str = "auto") -> int:
-    split, machine = CONFIG_INFO[config]
+    split, machine, repo_id = CONFIG_INFO[config]
     H, W = GRID[machine]
 
     if not npz_path.exists():
@@ -129,7 +133,7 @@ def validate(npz_path: Path, config: str, max_shots: int, *, ref: str = "auto") 
     frame_counts: list[int] | None = None
     ref_label = ""
     if ref == "hf":
-        print("; streaming reference inputs from the Hub …", flush=True)
+        print(f"; streaming reference inputs from {repo_id} …", flush=True)
     elif config in CONFIG_POOL_SPLIT:
         try:
             frame_counts, ref_label = shot_frame_counts(config, prefer=ref if ref != "auto" else "auto")
@@ -138,9 +142,9 @@ def validate(npz_path: Path, config: str, max_shots: int, *, ref: str = "auto") 
             if ref == "pool":
                 print(f"ERROR: no local pool for {config}", file=sys.stderr)
                 return 2
-            print("; local ref unavailable, streaming from the Hub …", flush=True)
+            print(f"; local ref unavailable, streaming from {repo_id} …", flush=True)
     else:
-        print("; streaming reference inputs from the Hub …", flush=True)
+        print(f"; streaming reference inputs from {repo_id} …", flush=True)
 
     errors: list[str] = []
     warnings: list[str] = []
@@ -157,18 +161,32 @@ def validate(npz_path: Path, config: str, max_shots: int, *, ref: str = "auto") 
             prefix = f"shot_{i:04d}"
             _check_shot(sub, prefix, T, H, W, machine, errors, warnings)
     else:
-        from datasets import load_dataset
-
-        ds = load_dataset(REPO_ID, config, split=split, streaming=True)
-        for i, row in enumerate(ds):
-            if max_shots and i >= max_shots:
-                capped = True
-                print(f"  (stopped at --max-shots {max_shots}; full validation needs --max-shots 0)")
-                break
-            n += 1
-            prefix = f"shot_{i:04d}"
-            T = len(np.asarray(row["efit_times"]))
-            _check_shot(sub, prefix, T, H, W, machine, errors, warnings)
+        import pyarrow.parquet as pq
+        cache_dir = Path("/media/catskills/CRC_FUSION_LAB/huggingface/hub/datasets--ganatma--fusion-equilibrium-challenge-final/snapshots/965040c12b814f33c8e7209f6b1799932247e793/data") / config
+        if cache_dir.exists() and len(list(cache_dir.glob("*.parquet"))) > 0:
+            p_files = sorted(list(cache_dir.glob("*.parquet")))
+            for i, p in enumerate(p_files):
+                if max_shots and i >= max_shots:
+                    capped = True
+                    print(f"  (stopped at --max-shots {max_shots}; full validation needs --max-shots 0)")
+                    break
+                n += 1
+                prefix = f"shot_{i:04d}"
+                tbl = pq.read_table(p, columns=["efit_times"])
+                T = len(tbl["efit_times"][0].as_py())
+                _check_shot(sub, prefix, T, H, W, machine, errors, warnings)
+        else:
+            from datasets import load_dataset
+            ds = load_dataset(repo_id, config, split=split, streaming=True)
+            for i, row in enumerate(ds):
+                if max_shots and i >= max_shots:
+                    capped = True
+                    print(f"  (stopped at --max-shots {max_shots}; full validation needs --max-shots 0)")
+                    break
+                n += 1
+                prefix = f"shot_{i:04d}"
+                T = len(np.asarray(row["efit_times"]))
+                _check_shot(sub, prefix, T, H, W, machine, errors, warnings)
 
     if not capped:
         expected_keys = {f"shot_{i:04d}_{s}" for i in range(n) for s in ("psirz", *SCALARS)}
@@ -198,6 +216,7 @@ def validate(npz_path: Path, config: str, max_shots: int, *, ref: str = "auto") 
 
 
 def main() -> int:
+    configure_lab()
     ap = argparse.ArgumentParser(description="Validate a submission .npz's shape (no scoring)")
     ap.add_argument("npz", type=Path, help="submission .npz to validate")
     ap.add_argument("--config", required=True, choices=list(CONFIG_INFO),
