@@ -45,28 +45,28 @@ R_LCFS_MAX_MIN_M = 1.00
 R_LCFS_INBOARD_MAX_M = 0.40
 EDGE_CELLS = 2.0
 IP_SCALE = 0.70
-GAMMA_BAR = -1.0  # labelled: li ~0.40 high at −2. Still FF' > 0.
+GAMMA_BAR = -1.0  # li ~0.40 high at −2. Still FF' > 0.
 P2_SCALE = 1.8  # diverted end. ×2 squeezed volume; ×1.8 is the pinch/volume fit
 BLEED = 0.0
-P4_SCALE = 1.15  # 28351: seats both pinches. ×0.85 left δ low. Volume pays.
+P4_SCALE = 1.15  # seats both pinches. ×0.85 left δ low. Volume pays.
 F4_COL = ""
 F4_SCALE = 1.0
 SOL_SCALE = 0.5  # diverted end (centre-column shield)
 P2_IP_REF = 0.34  # |P2|/|Ip| at the seated 90 ms frame
-SOL_BLEED_REF_A = 16.3e3  # amperes. First-frame OH on 28348; bleed=1 there, 0 at I_sol ≤ 0.
-A_Z_BASE_M = 0.08  # labelled: diverted kappa / li; support was a circle
-A_Z_EXTRA_M = 0.42  # labelled 28348, 70 ms: taller limited oval (was 0.35)
+SOL_BLEED_REF_A = 16.3e3  # amperes. First-frame OH at limited end; bleed=1 there, 0 at I_sol ≤ 0.
+A_Z_BASE_M = 0.08  # diverted kappa / li; support was a circle
+A_Z_EXTRA_M = 0.42  # limited end (~70 ms): taller limited oval (was 0.35)
 A_Z_DIVERT_M = 0.18  # diverted: +6 cm on the 0.0.11 ellipse. κ was 15 cm short.
 P2L_DIVERT = 0.105  # extra on P2L only. ×1.15 left δ_top low once a_Z grew.
 P5_DIVERT = -0.18  # diverted ×0.82. ×0.85 was 0.0.11; ×0.80 reopened δ_bot on the bundle.
-R0_BLEED_M = 0.02  # labelled 28348, 70 ms: R0 inboard while limited (was fat outboard)
+R0_BLEED_M = 0.02  # limited end (~70 ms): R0 inboard while limited (was fat outboard)
 Z0_DIVERT_M = 0.009  # diverted end. Fixed 8 mm was anti-correlated with EFIT (r=−0.68).
 Z0_BLEED_M = 0.004  # b=1 → 5 mm, near the early-frame EFIT axis.
 Z0_M = 0.009
-IP_BLEED = 0.15  # labelled 28348, 70 ms: 0.85 Ip at b=1 (sol well on; do not add full Ip)
+IP_BLEED = 0.15  # limited end (~70 ms): 0.85 Ip at b=1 (sol well on; do not add full Ip)
 IP_DIVERT = 0.20  # diverted ×0.90. ×0.85 left volume low after P5 ×0.82.
-SOL_BLEED = 0.10  # labelled 28348, 70 ms: sol ×0.60 at b=1 (was 0.50 → full sol)
-Q95_BLEED_SCALE = 0.55  # labelled 3-shot: map q × this on the OH well
+SOL_BLEED = 0.10  # limited end (~70 ms): sol ×0.60 at b=1 (was 0.50 → full sol)
+Q95_BLEED_SCALE = 0.55  # map q × this on the OH well
 Q95_WALK_SCALE = 0.35  # Ampère W is short just after divert; ×(1+0.35(1-w)(1-b))
 Q95_WELL_MAP = 17.0  # q_map still the solenoid well (W long)
 Q95_DIVERT_MAP = 8.0  # Ampère has shortened W; walk law from here down

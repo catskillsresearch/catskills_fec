@@ -11,16 +11,13 @@ been wired up.
 
 Labelled holdout
 ----------------
-``parquet_data/mast_shot_{28348,28350,28351}.parquet`` carry real ``efit_psirz``:
-115 frames, 485,875 pixels, on the MAST envelope (R in [0.06, 2.00] m, Z in
-[-2.00, 2.00] m). `CHARCOAL_PLAN.md` section 13 noted these exist and nothing
-ever scored against them. 115 frames is thin on *shot* diversity but ample for
-R2_psi, which pools over pixels -- and it detects the 0.83 -> 0.10 style collapse
-that is the actual failure mode, instantly.
-
-These shots are 283xx while the scored public split is 23xxx-27xxx, so treat the
-number as a collapse detector and a relative ranker between checkpoints, not as a
-prediction of public MAST S.
+The starter-kit labelled demo parquets under ``parquet_data/`` carry real
+``efit_psirz`` (115 frames, 485,875 pixels) on the MAST envelope (R in
+[0.06, 2.00] m, Z in [-2.00, 2.00] m). They are inspect-only under the
+challenge rules — not a train split and not a substitute for public MAST S.
+115 frames is thin on *shot* diversity but ample for R2_psi, which pools over
+pixels and detects the 0.83 -> 0.10 style collapse that is the actual failure
+mode.
 
 Plausibility, no labels at all
 ------------------------------
@@ -51,7 +48,7 @@ if str(ROOT / "fusion_scoring") not in sys.path:
 
 from catskills.machine_env import load_env
 
-# The three demo shots are the only MAST rows anywhere in the corpus with labels.
+# Starter-kit labelled demo parquet stems (inspect / local collapse detector only).
 HOLDOUT_SHOTS = ("mast_shot_28348", "mast_shot_28350", "mast_shot_28351")
 MACHINE = "MAST"
 

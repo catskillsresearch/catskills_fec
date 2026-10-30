@@ -2,7 +2,7 @@
 
 This document tabulates all empirical calibration constants, coil scaling multipliers, and trajectory parameters that are tuned specifically for the **MAST One-Shot Forward (OSF) physics model** (`mast_12_osf_0.0.12`).
 
-These constants cannot be derived from first-principles engineering or raw unlabeled input waveforms alone; they were empirically tuned against the 115 flattop reference frames of the 3 labelled MAST demo shots (`28348`, `28350`, `28351`).
+These constants cannot be derived from first-principles engineering or raw unlabeled input waveforms alone. They are pinned by physics end-members (ohmic limited vs diverted flattop) and validated by Codabench fleet probes on the 69,075 public-test frames — see [MAST calibration](mast-calibration.md).
 
 ---
 

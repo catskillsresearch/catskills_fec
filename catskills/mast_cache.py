@@ -208,7 +208,7 @@ def all_keys() -> list[str]:
 
 def load_row(key: str, *, prefer_demo: bool = False) -> dict:
     """Ingest parquet by default. Holdout scoring must pass prefer_demo=True
-    so frames match ``parquet_data/mast_shot_283xx`` (different T and ψ scale)."""
+    so frames match the starter-kit demo parquets (different T and ψ scale than ingest)."""
     from catskills.mast_eval import holdout_dir
     demo = holdout_dir() / f"{key}.parquet"
     ing = parquet_dir() / f"{key}.parquet"

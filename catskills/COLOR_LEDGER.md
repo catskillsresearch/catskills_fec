@@ -1014,7 +1014,7 @@ A separate sign bug: `gs_solver` carried its own `VAC_SIGN = {"d3": 1, "mast": 1
 
 ### 29.3 The profile is a prerequisite, not a refinement
 
-The plan treated a canonical profile as a checkpoint and per-frame profiles as polish. That is backwards, and the mechanism matters. Radial force balance ties the plasma's major radius to the current profile, so a wrong profile does not blur the answer — past some distance **no equilibrium exists at the measured \(I_p\)**, and the iteration correctly fails to find one, walking the plasma into the wall. Canonical \((3,3,0.25)\) has no equilibrium for **11 of 42 frames** of `mast_shot_28350`, which score \(R^2_\psi\approx-8\) while the rest of the shot runs +0.98. A fixed-profile gate cannot pass, on either machine.
+The plan treated a canonical profile as a checkpoint and per-frame profiles as polish. That is backwards, and the mechanism matters. Radial force balance ties the plasma's major radius to the current profile, so a wrong profile does not blur the answer — past some distance **no equilibrium exists at the measured \(I_p\)**, and the iteration correctly fails to find one, walking the plasma into the wall. Canonical \((3,3,0.25)\) has no equilibrium for **11 of 42 frames** of a starter-kit labelled demo shot, which score \(R^2_\psi\approx-8\) while the rest of the shot runs +0.98. A fixed-profile gate cannot pass, on either machine.
 
 Handed the *labels'* geometry the family is ample: **+0.9984** per-frame median on DIII-D and **+0.9999** on MAST (`gs_profile.fit_from_labels`). So the parametrisation was never the bottleneck.
 
@@ -3180,14 +3180,14 @@ larger \(k\). Receipts: `P35_MPOD_CACHE_MP1.json`, `P35_MPOD_MP1.json`, `P35_MPO
 Cache `mast_features_v1` only (never DIII-D `features_v1` / `coeffs_v1`): 3,738 ingest
 parquets, width 308 (14 archive magnetics + Thomson). Dualctx 512×4, win9 smoothdiff,
 clip 10, PCA \(k=60\), 12 ep, batch 2048, seed 42. Train 3,655 after excluding the three
-demo keys and sealing 80. Holdout scoring uses `parquet_data/mast_shot_283xx`
-(`prefer_demo=True`); ingest 283xx is a different recording (T and \(\psi\) scale).
+demo keys and sealing 80. Holdout scoring uses the starter-kit labelled demo parquets
+(`prefer_demo=True`); ingest holdout keys is a different recording (T and \(\psi\) scale).
 
 | fold | \(R^2_\psi\) | note |
 |---|---:|---|
 | official 3-shot demo | **0.980803** | gate 0.9976 |
 | sealed 80 (archive) | 0.513440 | in-distribution, shot-disjoint |
-| ingest-aligned 283xx raw | 0.990571 | 0.9944 / 0.9858 / 0.9923 per shot |
+| ingest-aligned holdout raw | 0.990571 | 0.9944 / 0.9858 / 0.9923 per shot |
 
 Official \(S=0.659487\), Cons 0.17572, \(D_{\rm LCFS}=0.150991\). \(q_{95}\)/\(\beta_N\)
 NaN. **MISS.** DIII-D ship stays `o1x5_42for7`. Not a zero-shot MAST claim (~53% archive
@@ -3199,7 +3199,7 @@ overlap, §34.14). Receipt: `results/mast_archive/P36_M1_archive.json`; ckpt
 Same trunk/cache as §34.26, tag `M1_long`, 50 epochs, new ckpt. Best val epoch 29
 (val MSE \(2.26\times10^{-2}\) vs M1 \(2.41\times10^{-2}\)). Official demo
 \(R^2_\psi=0.981548\) vs M1 0.980803: residual ratio 1.04×, not the ~8× needed
-for 0.9976. Sealed 0.510443 (no gain). Ingest-aligned 283xx raw 0.993169.
+for 0.9976. Sealed 0.510443 (no gain). Ingest-aligned holdout raw 0.993169.
 **MISS.** Extra epochs are not the lever. Next is \(\Psi_{\rm vac}\) residual
 (`M2_vacres`). Receipt: `P36_M1_long.json`.
 
@@ -3212,7 +3212,7 @@ on \(\psi-\Psi_{\rm vac}\), add \(\Psi_{\rm vac}\) back at infer. 12 ep, same sp
 |---|---:|---:|---:|
 | official demo \(R^2_\psi\) | 0.980803 | **0.975249** | 0.9976 |
 | sealed 80 | 0.513440 | 0.512213 | gain |
-| ingest-aligned 283xx | 0.990571 | 0.990043 | — |
+| ingest-aligned holdout | 0.990571 | 0.990043 | — |
 
 Official \(S=0.628115\), Cons 0.053, \(D_{\rm LCFS}=0.190\). Residual val MSE matched
 M1; the vac skip did not cut residual ~8× and **hurt** the demo. **NULL.** Do not
@@ -3231,7 +3231,7 @@ Train 3,622. Best val epoch 8 (val MSE \(6.73\times10^{-3}\) vs M1 \(2.41\times1
 | official demo \(R^2_\psi\) | 0.980803 | **0.980459** | 0.9976 |
 | sealed 80 | 0.513440 | 0.508589 | — |
 | sealed clean 79 | — | 0.904206 | — |
-| ingest-aligned 283xx | 0.990571 | 0.996818 | 0.9976 |
+| ingest-aligned holdout | 0.990571 | 0.996818 | 0.9976 |
 
 Official \(S=0.639979\), Cons 0.088, \(D_{\rm LCFS}=0.169\). QC+balance lifted
 in-distribution ingest (residual ~3× vs M1) and clean sealed to 0.90; the official
@@ -3242,7 +3242,7 @@ stays `o1x5_42for7`. Receipt: `P36_M3_qc.json`.
 ### 34.30 MISS — M4_edge aye clock repair (Track 2)
 
 Ingest dropped edge Thomson when ``aye.time.max() >= 10``. Archive clocks are
-seconds; challenge EFIT is ms. ``*1000`` recovers demo 283xx Te at \(R^2=1\).
+seconds; challenge EFIT is ms. ``*1000`` recovers demo Te at \(R^2=1\).
 Sidecar `mast_aye_v1` (3,738/3,738, never `mast_features_v1` / DIII-D) and
 `mast_features_v2` (same Y, edge columns filled). M3 trunk, tag `M4_edge`,
 QC + shot-balanced, 12 ep. Best val epoch 8.
@@ -3255,7 +3255,7 @@ Zeroing the 32 edge columns on M3 at infer had already lifted official
 | official demo \(R^2_\psi\) | 0.980459 | **0.993369** | 0.9976 |
 | sealed 80 | 0.508589 | 0.506214 | — |
 | sealed clean 79 | 0.904206 | 0.895952 | — |
-| ingest-aligned 283xx | 0.996818 | 0.994737 | — |
+| ingest-aligned holdout | 0.996818 | 0.994737 | — |
 
 Official \(S=0.690065\), Cons 0.271, \(D_{\rm LCFS}=0.105\). Residual vs M3 is
 2.95×; still 2.76× short of 0.9976. **MISS.** Do not reopen the aye clock.
@@ -3285,11 +3285,11 @@ No train. M3_qc + edge mask, 115 demo frames. Pooled \(R^2_\psi=0.995329\).
 
 | shot | frames | \(R^2_\psi\) | SSE frac |
 |---|---:|---:|---:|
-| 28348 | 36 | 0.994039 | 0.410 |
-| 28350 | 42 | 0.994802 | 0.410 |
-| 28351 | 37 | **0.997278** | 0.180 |
+| demo A | 36 | 0.994039 | 0.410 |
+| demo B | 42 | 0.994802 | 0.410 |
+| demo C | 37 | **0.997278** | 0.180 |
 
-28351 is already past 0.9976. The miss is split across 28348/28350. Top-10 frames
+One demo is already past 0.9976. The miss is split across the other two. Top-10 frames
 hold 44% of SSE; 13/115 worst frames are the excess to the gate. No single-shot
 hog. **uniform.** Next is a 50-ep M3 clone scored with the same mask, not a
 per-shot recipe. Receipt: `P36_M6_resid.json`.

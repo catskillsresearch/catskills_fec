@@ -1,4 +1,4 @@
-"""Run osf_0.0.1 on the three labelled MAST shots.
+"""Run osf_0.0.1 on the labelled MAST starter-kit demo parquets (inspect / smoke).
 
     .venv/bin/python -m osf
 """
@@ -18,6 +18,7 @@ from osf.osf_0_0_1 import MODEL_ID, coil_unit_maps, plasma_green, solve_shot, wr
 
 DEMO = ROOT / "parquet_data"
 OUT = ROOT / "results" / MODEL_ID
+# Filenames of the in-repo starter-kit demos (format inspection only).
 SHOTS = (28348, 28350, 28351)
 
 

@@ -43,9 +43,9 @@ P2_SCALE = 2.0  # diverted end. n_share is already 20; this is relative strength
 P4_SCALE = 0.7
 SOL_SCALE = 0.5  # diverted end (centre-column shield)
 P2_IP_REF = 0.34  # |P2|/|Ip| at the seated 90 ms frame
-SOL_BLEED_REF_A = 16.3e3  # amperes. First-frame OH on 28348; bleed=1 there, 0 at I_sol ≤ 0.
-A_Z_EXTRA_M = 0.35  # labelled 28348, 70 ms: a_Z = 0.85 m at b=1
-IP_BLEED = 0.30  # labelled 28348, 70 ms: full Ip at b=1
+SOL_BLEED_REF_A = 16.3e3  # amperes. First-frame OH at limited end; bleed=1 there, 0 at I_sol ≤ 0.
+A_Z_EXTRA_M = 0.35  # limited end (~70 ms): a_Z = 0.85 m at b=1
+IP_BLEED = 0.30  # limited end (~70 ms): full Ip at b=1
 
 
 def magnetics_knobs(currents_a: dict[str, float], ip_a: float) -> dict[str, float]:

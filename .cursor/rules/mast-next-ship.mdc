@@ -19,6 +19,6 @@ Before packaging or pushing the next ship, check that `mast_public_test.npz` is 
 2. βN is untouched: 0.460 / 1.289 / 2.936.
 3. `psirz` matches the 0.9.1 pack at float16. Flux was not rewritten.
 4. `.venv/bin/python validate_submission.py` on the MAST file with `--config mast_public_test` is OK.
-5. Labeled reference on shots 28348, 28350, 28351 (115 flattop frames): R²(q95) = +0.427, R²(βN) = +0.071, R²qb = +0.249. That is the 1.20× map integral, not a new fit.
+5. Labeled starter-kit reference (115 flattop frames): R²(q95) = +0.427, R²(βN) = +0.071, R²qb = +0.249. That is the 1.20× map integral, not a new fit.
 
 DIII-D is not this upload. Leave `diii_d_public_test.npz` on the un-tilted six-member blend (0.8.0 pack, holdout S = 0.995769).

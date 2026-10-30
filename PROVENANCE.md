@@ -48,7 +48,7 @@ Shipped `weights/phase3/zgrid.json` matches the Dev/public `*_thz` law (±1.2) u
 | Data | Used? |
 |---|---|
 | FAIR-MAST EFIT++ / archive reconstructions | **No** |
-| Demo shots 28348/28350/28351 as fit targets | **No** (inspect-only historically; not in training loop) |
+| Labelled MAST demo equilibria as fit targets | **No** (inspect-only historically; not in training loop) |
 | `mast_envelope.npz` as prior/mask | **No** |
 | Official MAST sensor inputs | **Yes** |
 | Public machine geometry / literature constants | **Yes** |

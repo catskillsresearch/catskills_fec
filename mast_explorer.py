@@ -588,13 +588,12 @@ def init_environment():
     # Gather unlabelled test shots
     test_paths = shot_paths("mast_public_test")
     
-    # Gather demo shots if available
-    demo_files = [
-        ROOT / "parquet_data" / "mast_shot_28348.parquet",
-        ROOT / "parquet_data" / "mast_shot_28350.parquet",
-        ROOT / "parquet_data" / "mast_shot_28351.parquet",
+    # Gather starter-kit labelled demo parquets if present (inspect-only).
+    from catskills.mast_cache import HOLDOUT_KEYS
+    demo_paths = [
+        p for k in HOLDOUT_KEYS
+        if (p := ROOT / "parquet_data" / f"{k}.parquet").is_file()
     ]
-    demo_paths = [p for p in demo_files if p.is_file()]
 
     ALL_SHOT_PATHS = demo_paths + test_paths
     print(f"[INIT] Indexed {len(test_paths)} unlabelled test shots + {len(demo_paths)} demo shots.", flush=True)
@@ -619,7 +618,7 @@ def init_environment():
         SHOT_METADATA_INDEX[p.stem] = {
             "stem": p.stem,
             "path": str(p),
-            "is_demo": "28348" in p.stem or "28350" in p.stem or "28351" in p.stem,
+            "is_demo": p.stem in HOLDOUT_KEYS,
         }
 
 
@@ -759,7 +758,8 @@ class ExplorerHandler(BaseHTTPRequestHandler):
             shots_list = []
             for p in ALL_SHOT_PATHS:
                 stem = p.stem
-                is_demo = "28348" in stem or "28350" in stem or "28351" in stem
+                from catskills.mast_cache import HOLDOUT_KEYS
+                is_demo = stem in HOLDOUT_KEYS
                 shots_list.append({
                     "stem": stem,
                     "is_demo": is_demo,
@@ -781,7 +781,7 @@ class ExplorerHandler(BaseHTTPRequestHandler):
                 ip = [float(val) for val in row["magnetics_plasma_current"]]
                 return self.send_json({
                     "stem": stem,
-                    "is_demo": "28348" in stem or "28350" in stem or "28351" in stem,
+                    "is_demo": bool(SHOT_METADATA_INDEX.get(stem, {}).get("is_demo")),
                     "n_frames": len(times),
                     "times": times,
                     "t_min": round(min(times), 1) if times else 0,

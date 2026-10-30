@@ -96,3 +96,9 @@ catskills/*.md
 
 benchmarks
 docs/FEC_assembled.md
+docs/FEC.aux
+docs/FEC.fdb_latexmk
+docs/FEC.fls
+docs/FEC.out
+docs/FEC.tex
+docs/FEC.toc

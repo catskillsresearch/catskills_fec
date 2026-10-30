@@ -203,7 +203,7 @@ def predict_holdout(model, ck, device, mask_edge: bool = False):
 
 
 def _ingest_aligned_r2(model, ck, device):
-    """Raw pixel R² on ingest-cache 283xx (not official; different T/scale than demo)."""
+    """Raw pixel R² on ingest-cache holdout keys (not official; different T/scale than demo)."""
     per = {}
     ys, ps = [], []
     for key in HOLDOUT_KEYS:
@@ -470,7 +470,7 @@ def main() -> int:
         "checkpoint": str(ckpt),
         "note": "FAIR-MAST archive training; overlaps hidden test fold; not a zero-shot claim. "
                 "Official holdout uses parquet_data demo (prefer_demo=True). "
-                "Ingest 283xx is a different recording. DIII-D o1x5_42for7 unchanged. "
+                "Ingest holdout keys are a different recording than the demo parquets. DIII-D o1x5_42for7 unchanged. "
                 "q95/βN submitted as NaN.",
         "seconds": round(time.perf_counter() - t0, 1),
     }

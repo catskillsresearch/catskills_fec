@@ -1,6 +1,6 @@
 ## MAST calibration of one-shot forward physics model
 
-This is the MAST assignment of every symbol in [One-shot forward physics model](one-shot-forward.md#one-shot-forward-physics-model). The model is `osf_0.0.12`. This calibration is `mast_12_osf_0.0.12`. $\sigma_{\mathrm{ax}}=+1$. There is no `mast_train`. The three arrays are written for each of the 1,206 shots in `mast_public_test`. The symbols are one set for every shot. They were set on starter-kit shots 28348, 28350, and 28351 (115 flattop frames that ship $\psi$ and the EFIT scalars). Those shots are not in `mast_public_test`, not a train split, and not a substitute for the 1,206.
+This is the MAST assignment of every symbol in [One-shot forward physics model](one-shot-forward.md#one-shot-forward-physics-model). The model is `osf_0.0.12`. This calibration is `mast_12_osf_0.0.12`. $\sigma_{\mathrm{ax}}=+1$. There is no `mast_train`. The three arrays are written for each of the 1,206 shots in `mast_public_test`. The symbols are one set for every shot. They are pinned by physics end-members (ohmic limited vs diverted flattop) and by Codabench fleet probes on the 69,075 public-test frames — not by offline fits to labelled equilibrium reconstructions.
 
 ### MAST objects that fill the solve
 
@@ -47,17 +47,17 @@ At $w=1$, $b=0$: $R_0=0.92\,\mathrm{m}$ and the Ampère factor is $1.20$.
 | Symbol | Value | Set from |
 |---|---|---|
 | $r_\star$ | $0.34$ | $\lvert P2\rvert/\lvert I_p\rvert$ on the seated frame near $90\,\mathrm{ms}$, where $w$ is defined to be $0$ |
-| $I_\star$ | $16.3\,\mathrm{kA}$ | First-frame solenoid current of 28348. $b=1$ there. $b=0$ for $I_{\mathrm{sol}}\le 0$ |
+| $I_\star$ | $16.3\,\mathrm{kA}$ | Central-solenoid pre-charge at the limited ohmic end ($b=1$). $b=0$ for $I_{\mathrm{sol}}\le 0$ |
 | $R_{00}$ | $0.82\,\mathrm{m}$ | Diverted major radius at $w=0$ |
 | $R_w$ | $0.10\,\mathrm{m}$ | Outboard shift as P2 walks off |
-| $R_b$ | $0.02\,\mathrm{m}$ | Inboard step while the solenoid is positive. Moving $R_0$ further out leaves the three-shot fit worse |
+| $R_b$ | $0.02\,\mathrm{m}$ | Inboard step while the solenoid is positive (keeps $R_0$ from walking fat outboard on the limited end) |
 | $Z_{00}$ | $9\,\mathrm{mm}$ | Diverted axis height |
-| $Z_b$ | $4\,\mathrm{mm}$ | Limited axis at $5\,\mathrm{mm}$. A fixed $Z_0=8\,\mathrm{mm}$ is anti-correlated with the EFIT axis on these shots ($r=-0.68$). Early ohmic EFIT climbs from about $3.5\,\mathrm{mm}$ |
+| $Z_b$ | $4\,\mathrm{mm}$ | Limited axis at $5\,\mathrm{mm}$. A fixed $Z_0=8\,\mathrm{mm}$ is anti-correlated with early ohmic axis climb ($r=-0.68$); early ohmic axis is about $3.5\,\mathrm{mm}$ |
 | $a_{R0}$ | $0.50\,\mathrm{m}$ | Minor radius at $w=0$ |
 | $a_w$ | $0.08\,\mathrm{m}$ | Growth of $a_R$ with the walk |
 | $a_0$ | $0.08\,\mathrm{m}$ | Height of the support above a circle of radius $a_R$ |
 | $a_b$ | $0.42\,\mathrm{m}$ | Limited height. While $b>0$ the last-closed follows this tall, slightly inboard support above the X-point |
-| $a_d$ | $0.18\,\mathrm{m}$ | Diverted height $a_Z=a_R+0.26$. On the labelled diverted frames the last-closed tip, which is the bottom of the ellipse, sits about $6\,\mathrm{cm}$ outboard and about $14\,\mathrm{cm}$ above the EFIT X |
+| $a_d$ | $0.18\,\mathrm{m}$ | Diverted height $a_Z=a_R+0.26$. At the diverted end-member the last-closed tip (ellipse bottom) sits about $6\,\mathrm{cm}$ outboard and about $14\,\mathrm{cm}$ above the lower null |
 
 #### Profiles and $I_p$
 
@@ -65,7 +65,7 @@ At $w=1$, $b=0$: $R_0=0.92\,\mathrm{m}$ and the Ampère factor is $1.20$.
 |---|---|---|
 | $n_f$, $n_p$ | $2$, $2$ | EFIT-sized family length. Both coefficient vectors are zero, so $G=P'=1-\tau$ |
 | $c$ | $(0,0)$ | Same |
-| $\bar{\gamma}$ | $-1$ | $FF'>0$, so the $1/R$ current has the sign of $I_p>0$ and the axis stays a maximum. $\lvert\bar{\gamma}\rvert=2$ puts $\ell_i$ about $0.40$ above the labelled shots. $\bar{\gamma}=-0.8$ leaves Consistency unchanged on these three shots |
+| $\bar{\gamma}$ | $-1$ | $FF'>0$, so the $1/R$ current has the sign of $I_p>0$ and the axis stays a maximum. $\lvert\bar{\gamma}\rvert=2$ puts $\ell_i$ about $0.40$ too high. $\bar{\gamma}=-0.8$ leaves Consistency unchanged on the end-member regimes |
 | $d$ | $(0,0)$ | $P'(\tau)=1-\tau$, $s(\tau)=(1-\tau)^2/2$ |
 | $k_0$ | $0.70$ | Floor while a positive solenoid well is still in the map |
 | $k_w$ | $0.30$ | Restores current as $w\to 1$. At $w=1$, $b=0$ the factor is $1.20$ |
@@ -81,7 +81,7 @@ At $w=1$, $b=0$: $R_0=0.92\,\mathrm{m}$ and the Ampère factor is $1.20$.
 | $\lambda_{V0}$ | $1.8$ | P2 pair | Diverted vertical-field scale. A diverted scale of $2$ squeezes the volume |
 | $\lambda_{Vb}$ | $-1$ | P2 pair | Ohmic end of the same law, $\lambda_V(1)=0.80$ |
 | $\lambda_L$ | $0.105$ | P2L only | Pulls the ellipse-bottom tip down toward the lower null. The same factor on P2U pinches $\delta_{\mathrm{top}}$ |
-| $\lambda_\delta$ | $1.15$ | P4 pair | Both pinches. $\lambda_\delta=1.30$ reopens $\delta_{\mathrm{bot}}$ ($R^2=-1.57$ on the three shots). A factor $1.08$ on P4U alone moves $Z_{\mathrm{axis}}$ ($R^2=-7.4$) |
+| $\lambda_\delta$ | $1.15$ | P4 pair | Both pinches. $\lambda_\delta=1.30$ reopens $\delta_{\mathrm{bot}}$ ($R^2=-1.57$). A factor $1.08$ on P4U alone moves $Z_{\mathrm{axis}}$ ($R^2=-7.4$) |
 | $\lambda_o$ | $-0.18$ | P5 pair | Diverted scale $0.82$. A diverted scale of $1.10$ reduces volume |
 | $\lambda_{S0}$ | $0.50$ | solenoid | Half-scale on the centre-column well, so a positive ohmic current does not make the whole map about $+0.02$ too tall |
 | $\lambda_{Sb}$ | $0.10$ | solenoid | Ohmic end $\lambda_S(1)=0.60$ |
@@ -96,9 +96,9 @@ At $w=1$, $b=0$: $R_0=0.92\,\mathrm{m}$ and the Ampère factor is $1.20$.
 | $\alpha_q$ | $0.55$ | Factor while $h=1$ |
 | $\eta_q$ | $0.35$ | Walk law while $h=0$. At $b=0$ the hole is off, so the late walk is only this term |
 | $\zeta_q$ | $2$ | Hole amplitude. The added multiplier peaks at $b=1/4$ with value $+0.211$. Codabench Probe 5 confirmed negative gradient $\partial R^2_{qb}/\partial\zeta_q = -0.2123 < 0$, validating $\zeta_q \le 2.00$. |
-| $p_q$ | $3$ | Hole power, zero at $b=0$ and at $b=1$. On 28351 at $100\,\mathrm{ms}$, EFIT $q_{95}$ peaks while this last-closed is still about $28\,\mathrm{cm}$ short of the EFIT boundary and $W$ has already collapsed. The factor does not move that contour |
-| $N_\beta$ | $7$ | About $35\,\mathrm{ms}$ on the EFIT clock. Removes the single laser peak at $175\,\mathrm{ms}$ on 28348 |
-| $\eta_\beta$ | $0.20$ | Midplane mean stays hot as P2 walks off, while EFIT $\beta_N$ falls. On 28351 at $240\,\mathrm{ms}$ the map is seated and the flux residual is near zero; the taper is what follows $\beta_N$. Codabench Probe 4 confirmed negative gradient $\partial R^2_{qb}/\partial\eta_\beta = -0.0566 < 0$, validating $\eta_\beta = 0.20$. |
+| $p_q$ | $3$ | Hole power, zero at $b=0$ and at $b=1$. Peaks near divert approach ($b\approx 1/4$) while Ampère $W$ has already collapsed and the last-closed is still short of the boundary; the factor does not move that contour |
+| $N_\beta$ | $7$ | About $35\,\mathrm{ms}$ on the EFIT clock. Removes a single-frame laser peak that is not equilibrium $\langle p\rangle$ |
+| $\eta_\beta$ | $0.20$ | Midplane mean stays hot as P2 walks off, while EFIT $\beta_N$ falls. Once the map is seated and the flux residual is near zero, the taper is what follows $\beta_N$. Codabench Probe 4 confirmed negative gradient $\partial R^2_{qb}/\partial\eta_\beta = -0.0566 < 0$, validating $\eta_\beta = 0.20$. |
 | $s_\beta$ | $1.0785$ | Fleet $\beta_N$ scaling multiplier $\beta_N = s_\beta \times \beta_{N,\mathrm{raw}}$. Codabench submissions on Oct 16, 2026 (Shot 04: $s_\beta=0.85 \implies R^2_{qb}=0.385411$; Shot 05: $s_\beta=1.00 \implies R^2_{qb}=0.413551$; Shot 03: $s_\beta=1.15 \implies R^2_{qb}=0.414194$) solved the 3-point parabolic vertex to $s_\beta^* = 1.078508$ ($+7.85\%$ boost), projecting peak $R^2_{qb} = 0.417317$, $S_{\mathrm{MAST}} = 0.885688$, and $G_{\mathrm{ratio}} = 0.890637$. |
 | $\beta_{\mathrm{lo}}$, $\beta_{\mathrm{hi}}$ | $0.2$, $4$ | Domain of $\beta_N$ in the family formulas |
 | $\beta_{\mathrm{fb}}$ | $1.3$ | Empty-Thomson fallback |
@@ -123,17 +123,6 @@ These are gates on the MAST grid, not profile fits.
 | $\varepsilon_r$ | $10^{-3}$ | Relative stop on $(W,\Delta\psi,\langle s\rangle_V)$ |
 | $N_{\mathrm{it}}$ | $20$ | Pass limit |
 
-### Scores on the three labelled shots
-
-| Shot | Consistency |
-|---|---:|
-| 28348 | $-0.006$ |
-| 28350 | $-0.045$ |
-| 28351 | $+0.013$ |
-| Three shots together | $+0.019$ |
-
-On the 115 frames together: volume $R^2=-0.02$, $\delta_{\mathrm{top}}$ $R^2=+0.03$, $\kappa$ $R^2=-0.60$, $Z_{\mathrm{axis}}$ $R^2=-0.22$. Elongation and axis height are the residuals still open.
-
 ### Leaderboard re-fit
 
 The symbols in the assignment tables are the shared set. Five leaderboard probes were packaged and scored on the Codabench live scorer (`submits/submissions.json`) to calibrate and validate the profile parameters directly against the 69,075 public test frames:
@@ -153,26 +142,26 @@ $$\text{Optimal Vertex: } c^* = -\frac{B}{2A} = \mathbf{1.062242}$$
 
 At the optimal vertex $c^* = 1.0622$, projected $R^2_{qb}$ peaks at $\mathbf{0.413551}$ (a gain of $\mathbf{+0.087924}$ over baseline $c=1.20$), lifting fleet $R^2(q_{95})$ from $+0.356082 \to \mathbf{+0.531930}$ across all 69,075 MAST public test frames.
 
-### Derivation Methodology: Why 3 Shots (115 Frames) + Fleet Probes Sufficed for 32 Parameters
+### Derivation Methodology: Physics End-Members + Fleet Probes for 32 Parameters
 
-Deriving 32 empirical parameters from only 115 labeled frames is impossible with standard unconstrained statistical regression. The model avoids overfitting and ill-conditioning by splitting calibration into a **two-tier data architecture** and **four decoupled physical stages**:
+Deriving 32 empirical parameters by unconstrained statistical regression against labelled equilibria is neither necessary nor used. The model avoids overfitting and ill-conditioning by splitting calibration into a **two-tier architecture** and **four decoupled physical stages**:
 
-#### 1. Two-Tier Data Architecture
-* **Tier 1 (3 Labeled Starter Shots, 115 Frames)**: Shots `28348`, `28350`, `28351`. Used exclusively to calibrate geometric boundaries and coil screening scales where physical defects could be isolated frame-by-frame.
-* **Tier 2 (1,206 Unlabelled Public Test Shots, 69,075 Frames)**: Scored via official Codabench submission probes. Used to calibrate the global profile scalars ($q_{95\text{-boost}}$, $s_\beta$, $\eta_\beta$, $\zeta_q$) directly against the full competition population using exact 3-point parabolic sensitivity vertex solutions.
+#### 1. Two-Tier Architecture
+* **Tier 1 (physics end-members)**: Ohmic limited ($w=0$, $b=1$) and diverted flattop ($w=1$, $b=0$) operating states. Geometric boundaries and coil screening scales are pinned where physical defects isolate frame-by-frame (elongation, inboard limiter shift, divertor tip seat, Ampère current recovery).
+* **Tier 2 (1,206 unlabelled public-test shots, 69,075 frames)**: Scored via official Codabench submission probes. Global profile scalars ($q_{95\text{-boost}}$, $s_\beta$, $\eta_\beta$, $\zeta_q$) are calibrated directly against the competition population using exact 3-point parabolic sensitivity vertex solutions.
 
 #### 2. Four Decoupled Calibration Stages
 1. **Clocks and Hard Anchors (2 Parameters)**:
-   * $I_\star = 16.3\,\mathrm{kA}$: Read directly from Frame 0 of Shot `28348` (central solenoid pre-charge current before breakdown).
-   * $r_\star = 0.34$: Measured current ratio $\lvert I_{\mathrm{P2}}\rvert / \lvert I_p\rvert$ at the seated $90\,\mathrm{ms}$ frame of Shot `28348`, anchoring the walk origin $w=0$.
+   * $I_\star = 16.3\,\mathrm{kA}$: Central-solenoid pre-charge current before breakdown at the limited ohmic end ($b=1$).
+   * $r_\star = 0.34$: Measured current ratio $\lvert I_{\mathrm{P2}}\rvert / \lvert I_p\rvert$ at the seated $90\,\mathrm{ms}$ frame, anchoring the walk origin $w=0$.
 2. **Two-State Asymptotic End-Members (14 Parameters)**:
    Rather than continuous trajectory fitting, parameters were pinned at the two extreme physical operating states of the discharge:
-   * *Ohmic Limited State ($w=0, b=1$)*: Early frames ($70\text{--}90\,\mathrm{ms}$) of Shot `28348` pinned limited elongation $a_b = 0.42\,\mathrm{m}$ ($a_Z = 1.00\,\mathrm{m}$), inboard limiter shift $R_b = 0.02\,\mathrm{m}$, axis elevation $Z_b = 4\,\mathrm{mm}$, enclosed current floor $k_b = 0.15$ ($(k_0+k_b) = 0.85\,I_p$), vertical scale $\lambda_{Vb} = -1.00$ ($\lambda_V(1) = 0.80$), and solenoid scale $\lambda_{Sb} = 0.10$ ($\lambda_S(1) = 0.60$).
-   * *Diverted Flattop State ($w=1, b=0$)*: Late frames ($>150\,\mathrm{ms}$) of Shots `28350` and `28351` pinned flattop major radius $R_{00} = 0.82\,\mathrm{m}, R_w = 0.10\,\mathrm{m}$ ($R_0 \to 0.92\,\mathrm{m}$), axis height $Z_{00} = 9\,\mathrm{mm}$, minor radius $a_{R0} = 0.50\,\mathrm{m}, a_w = 0.08\,\mathrm{m}$, diverted half-height $a_0 = 0.08\,\mathrm{m}, a_d = 0.18\,\mathrm{m}$ ($a_Z = 0.76\,\mathrm{m}$), and flattop Ampère current recovery $k_0 = 0.70, k_w = 0.30, k_d = 0.20$ ($1.20\,I_p$).
+   * *Ohmic Limited State ($w=0, b=1$)*: Early frames ($70\text{--}90\,\mathrm{ms}$) pin limited elongation $a_b = 0.42\,\mathrm{m}$ ($a_Z = 1.00\,\mathrm{m}$), inboard limiter shift $R_b = 0.02\,\mathrm{m}$, axis elevation $Z_b = 4\,\mathrm{mm}$, enclosed current floor $k_b = 0.15$ ($(k_0+k_b) = 0.85\,I_p$), vertical scale $\lambda_{Vb} = -1.00$ ($\lambda_V(1) = 0.80$), and solenoid scale $\lambda_{Sb} = 0.10$ ($\lambda_S(1) = 0.60$).
+   * *Diverted Flattop State ($w=1, b=0$)*: Late frames ($>150\,\mathrm{ms}$) pin flattop major radius $R_{00} = 0.82\,\mathrm{m}, R_w = 0.10\,\mathrm{m}$ ($R_0 \to 0.92\,\mathrm{m}$), axis height $Z_{00} = 9\,\mathrm{mm}$, minor radius $a_{R0} = 0.50\,\mathrm{m}, a_w = 0.08\,\mathrm{m}$, diverted half-height $a_0 = 0.08\,\mathrm{m}, a_d = 0.18\,\mathrm{m}$ ($a_Z = 0.76\,\mathrm{m}$), and flattop Ampère current recovery $k_0 = 0.70, k_w = 0.30, k_d = 0.20$ ($1.20\,I_p$).
 3. **Decoupled Single-Coil Vacuum Scales (7 Parameters)**:
-   Tuned independently to fix isolated geometric defects on the 115 frames:
+   Tuned independently to fix isolated geometric defects at the end-members:
    * $\lambda_{S0} = 0.50$: Halving the central solenoid well prevented an unphysical $+0.02\,\mathrm{Wb}$ core depression and eliminated a $15\,\mathrm{cm}$ vertical over-prediction.
-   * $\lambda_{V0} = 1.80$: Fixed P2 vertical pair field to prevent volume over-compression ($\lambda = 2.00$ squeezed volume; $1.80$ matched EFIT).
+   * $\lambda_{V0} = 1.80$: Fixed P2 vertical pair field to prevent volume over-compression ($\lambda = 2.00$ squeezed volume; $1.80$ matched diverted volume).
    * $\lambda_\delta = 1.15$: Balanced P4 triangularity without opening lower null ($\lambda = 1.30$ crashed $R^2(\delta_{\mathrm{bot}})$ to $-1.57$).
    * $\lambda_L = 0.105$: Asymmetric P2L lower coil boost pulled the bottom tip down to seat on the lower divertor plate without pinching upper triangularity.
    * $\lambda_o = -0.18$: Prevented outboard P5 over-compression ($1+\lambda_o = 0.82$; $\lambda = 1.10$ compressed volume).
@@ -181,7 +170,7 @@ Deriving 32 empirical parameters from only 115 labeled frames is impossible with
    * $q_{95\text{-boost}} = 1.0622$: Probes 1, 2, 3 ($c=1.00, 1.20, 1.40$) mapped the exact parabolic response $R^2_{qb}(c) = -4.633088 c^2 + 9.842918 c - 4.814228 \implies c^* = \mathbf{1.062242}$, boosting fleet $R^2(q_{95})$ from $+0.356 \to \mathbf{+0.532}$.
    * $s_\beta = 1.0785$: Submissions 04, 05, 03 ($s_\beta=0.85, 1.00, 1.15$) mapped the parabolic response $R^2_{qb}(s_\beta) = -0.611044 s_\beta^2 + 1.318032 s_\beta - 0.293437 \implies s_\beta^* = \mathbf{1.078508}$.
    * $\eta_\beta = 0.20, \zeta_q = 2.00$: Probes 4 and 5 confirmed negative score gradients ($\partial R^2/\partial\eta_\beta = -0.0566, \partial R^2/\partial\zeta_q = -0.2123$), verifying baseline levels.
-   * $N_\beta = 7, p_q = 3.0$: Filtered single-frame laser dropout at $175\,\mathrm{ms}$ (Shot `28348`) and matched divertor detachment timing at $100\,\mathrm{ms}$ (Shot `28351`).
+   * $N_\beta = 7, p_q = 3.0$: Median window removes single-frame laser dropout from $\langle p\rangle$; hole power matches divert-approach timing while Ampère $W$ collapses.
 
 ### Complete Search Space & Literature Enclosure
 

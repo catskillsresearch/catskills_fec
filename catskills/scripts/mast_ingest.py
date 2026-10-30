@@ -131,7 +131,7 @@ def one_shot(fs, shot: int, static: dict) -> dict | None:
             return None
         tt = np.asarray(ts["time"], np.float64)
         # Archive clocks are seconds; challenge EFIT is ms. The old edge guard
-        # ``max < 10`` dropped valid 60 s aye windows (demo 283xx Te matches *1000).
+        # ``max < 10`` dropped valid 60 s aye windows (demo Te matches *1000).
         if tag == "edge":
             from catskills.mast_aye import thomson_times_to_ms
             times_ms = thomson_times_to_ms(tt, row["efit_times"])

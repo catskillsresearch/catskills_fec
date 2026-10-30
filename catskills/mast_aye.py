@@ -1,7 +1,7 @@
 """Sidecar FAIR-MAST edge Thomson (aye). Never writes mast_features_v1 or DIII-D caches.
 
 Ingest dropped aye when ``time.max() >= 10``. Archive clocks are seconds; challenge
-EFIT is milliseconds. ``*1000`` recovers official demo 283xx Te exactly (R²=1).
+EFIT is milliseconds. ``*1000`` recovers official demo Te exactly (R²=1).
 Prefer seconds-to-ms whenever that window overlaps EFIT; fall back to as-is ms.
 """
 from __future__ import annotations

@@ -91,7 +91,7 @@ normalisation so the shift cannot change the enclosed current.
 Which plane took a measurement to settle. The obvious candidate is the coil field's
 own null: vertical force balance on a current ring is ``F_Z = 2 pi R I_p B_R,ext``
 with ``B_R = -(1/R) d psi / dZ``, so a filament can only sit still where
-``d Psi_vac / dZ = 0``. Tested against the 115 labelled frames that target is not
+``d Psi_vac / dZ = 0``. Tested against labelled starter-kit frames that target is not
 merely imprecise, it is *anti-correlated* with the truth: r = -0.752, rms error
 23.8 mm against a true Z_axis spread of 1.2 mm.
 
