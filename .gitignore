@@ -94,3 +94,5 @@ catskills/*.md
 !catskills/scripts/generate_final_predictions.py
 
 
+benchmarks
+docs/FEC_assembled.md
