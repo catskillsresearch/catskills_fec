@@ -81,7 +81,9 @@ models/
 reports/
 research/
 tests/
-/scripts/
+/scripts/*
+!/scripts/build_fec_pdf.py
+!/scripts/tex_preamble_fec.tex
 catskills/probes/
 catskills/*.md
 !catskills/COLOR_LEDGER.md

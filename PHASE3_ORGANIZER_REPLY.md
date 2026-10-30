@@ -19,19 +19,19 @@ Please find our Phase 3 (Reproduce) package for the two Final submissions you li
 
 ## Hand-over artifact
 
-Versioned archive (SHA-256):
+Public GitHub Release (pinned source + trained weights):
 
-```
-sha256:dc29bb15607bb208e339750b51e0955b2b97de1c6290b3f642915d019d07f854
-```
+- Release: https://github.com/catskillsresearch/catskills_fec/releases/tag/phase3-reproduce-03becd2  
+- Commit: `03becd27c531906281cf8310a49f8b33a4d8a282`  
+- Archive: `phase3-reproduce-03becd2.tar.gz`  
+- SHA-256: `500f76d4e82acfc476f0aece384ec99c46f3ac5a6563021ca8e02ea41f2dbf7d`
 
-File (lab):  
-`/media/catskills/CRC_FUSION_LAB/fusion-equilibrium-challenge/benchmarks/CRC_FEQ_phase3/catskills_phase3_reproduce_20261030.tar.gz`  
-(private hand-over as needed; companion `PHASE3_ORGANIZER_REPLY.md` / `REPLAY_RECEIPT.md` in the same directory).
+Long-form methods document (assembled from the `fec.md` wiki: OSF + MAST/DIII-D calibration + DIII-D ML fit + Phase 2/3):  
+`docs/FEC.pdf` in the release / repository (`python3 scripts/build_fec_pdf.py`).
 
-Contents include model source, `environment.yml` / requirements, trained weights under `weights/phase3/` with `SHA256SUMS`, training entrypoint (`./reproduce.sh --train` / `catskills.scripts.phase3_train_charcoal`), inference entrypoint (`./reproduce.sh --weights-only` → `generate_final_predictions`), `PROVENANCE.md`, and `COMPUTE.md`.
+Contents include model source, `environment.yml` / requirements, trained weights under `weights/phase3/` with `SHA256SUMS`, training entrypoint (`./reproduce.sh --train`), inference entrypoint (`./reproduce.sh --weights-only` → `generate_final_predictions`), `PROVENANCE.md`, and `COMPUTE.md`.
 
-The archive is **self-contained** (real `.pt` files under `weights/phase3/`). No lab NAS / Fusion drive is required. Default outputs land in `benchmarks/CRC_FEQ_phase3/reproduce_<stamp>/` inside the extracted tree (`weight_diff.html`, `repro_weights/`, prediction `.npz`). See `REPRODUCE.md`.
+The archive is **self-contained** (real `.pt` files under `weights/phase3/`). No lab NAS / Fusion drive is required. Default outputs land in `benchmarks/CRC_FEQ_phase3/reproduce_<stamp>/` inside the extracted tree (`weight_diff.html`, `repro_weights/`, prediction `.npz`). Short how-to: `REPRODUCE.md`.
 
 ## Dual pipelines
 
@@ -52,7 +52,7 @@ Submission **1003664** was produced under a mistaken narrow ZGRID (−0.6…+0.8
 ./reproduce.sh --train --train-dir /path/to/diii_d_train
 ```
 
-Details: `REPRODUCE.md`. Compute budget: `COMPUTE.md` (≤24 GPU-h A100-class; OSF is CPU-only).
+Details: `docs/FEC.pdf` (long) and `REPRODUCE.md` (short). Compute budget: `COMPUTE.md` (≤24 GPU-h A100-class; OSF is CPU-only).
 
 We are happy to arrange a private hand-over if preferred before results are announced.
 

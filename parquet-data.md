@@ -32,7 +32,7 @@ How many coils $C$, how many chords $N$, the names of the coil-current columns, 
 
 ## MAST Data
 
-## MAST Introduction
+### MAST Introduction
 
 MAST (Mega Ampère Spherical Tokamak, Culham) is a tight-aspect-ratio machine: $R_0\simeq 0.9\,\mathrm{m}$, $a\simeq 0.6\,\mathrm{m}$, $B_\varphi\simeq 0.55\,\mathrm{T}$, $I_p\lesssim 1.3\,\mathrm{MA}$. There is **no** `mast_train`. Challenge 2 is zero-shot from DIII-D. Photographs below are the vessel and a diverted plasma; the cross-section is official FAIR geometry for MAST.
 
@@ -48,7 +48,7 @@ MAST (Mega Ampère Spherical Tokamak, Culham) is a tight-aspect-ratio machine: $
 
 *MAST $(R,Z)$ plane. Brown bar: 656-turn solenoid `magnetics_sol_current`. Blue tiles: P2–P6 upper/lower conductor elements (812 rows total). Red points: core Thomson on the midplane ($Z=0$). Purple squares: edge Thomson, still $Z=0$, at larger $R$. `tf_current` and `efps_current` have no poloidal rectangle. Flux sign is opposite to DIII-D: the axis is a **maximum** of $\psi$.*
 
-## MAST Coordinates and clocks
+### MAST Coordinates and clocks
 
 - **`efit_times`** $(T,)$, ms. $T\in[5,98]$ on public test. Diverted-only, not contiguous.
 - **`efit_grid_R`**, **`efit_grid_Z`** $(65,)$, m. $R\in[0.06,2.00]$, $Z\in[-2.00,2.00]$. Upstream EFIT stored $\psi$ on a 129-column $R$ grid with 64 empty interleaved columns; those empties are dropped. The axis convention is opposite to DIII-D: $\psi_{\mathrm{axis}}>\psi_{\mathrm{boundary}}$ on every frame. Median peak-to-peak is $\sim 0.21\,\mathrm{Wb/rad}$ against DIII-D’s $\sim 0.61$. The scorer flips a global sign; the amplitude factor is yours.
@@ -57,11 +57,11 @@ MAST (Mega Ampère Spherical Tokamak, Culham) is a tight-aspect-ratio machine: $
 
 The vacuum Green function and Grad–Shafranov operator are the shared recipe in the [Grad–Shafranov equation section](tokamak-theory.md#the-gradshafranov-equation). Geometry granularity is not: MAST ships **$C=812$** conductor elements from FAIR `pf_active`. A coil’s turn count is the number of rows that share its `coil_input_column`. Currents are already kA·turn for the P-coils, so each element carries $I/n_{\mathrm{share}}$ in the Green sum. `sol_current` is the exception (plain kA): the 656 solenoid rows *are* the turns, and ampere-turns are $I\cdot n_{\mathrm{share}}$.
 
-## MAST Solenoid
+### MAST Solenoid
 
 - **`magnetics_sol_current`** $(T_{\mathrm{mag}},)$, kA. Central solenoid (P1), $R\in[0.119,0.157]\,\mathrm{m}$, $Z\in[-1.471,1.459]\,\mathrm{m}$, 656 elements. Same physical role as `ECOILA`: $V_\ell=-d\Phi_{\mathrm{OH}}/dt$.
 
-## MAST Poloidal coils
+### MAST Poloidal coils
 
 `magnetics_p{2–6}{l,u}_current` $(T_{\mathrm{mag}},)$, kA·turn. Per-coil in-window peaks run from $\sim 3$ (`p3`, `p6`) to $\sim 185$ (`p2`); extremes $\sim\pm 600$.
 
@@ -73,22 +73,22 @@ The vacuum Green function and Grad–Shafranov operator are the shared recipe in
 | `p5u` / `p5l` | 23 / 23 | $1.59$–$1.72$ | $\pm(0.44$–$0.56)$ | outer midplane shaping |
 | `p6u` / `p6l` | 4 / 4 | $1.43$–$1.45$ | $\pm(0.86$–$0.93)$ | vertical stability |
 
-## MAST Toroidal field and error-field correction
+### MAST Toroidal field and error-field correction
 
 - **`magnetics_tf_current`** $(T_{\mathrm{mag}},)$, kA. Toroidal-field coil current. No `coil_*` row. $N_{\mathrm{TF}}=24$ (12 limbs $\times$ 2). Vacuum $F_b=\mu_0 N_{\mathrm{TF}}I_{\mathrm{TF}}/(2\pi)$ with $I_{\mathrm{TF}}$ in A, and $B_\varphi=F_b/R$ ($\sim 0.48\,\mathrm{T}$ at $R_0=0.85\,\mathrm{m}$ for $85\,\mathrm{kA}$). Same structure as DIII-D `bcoil`, different engineering scale ($\sim 0.55\,\mathrm{T}$ vs $\sim 2\,\mathrm{T}$).
 - **`magnetics_efps_current`** $(T_{\mathrm{mag}},)$, kA. Error-field correction. Not a poloidal-plane rectangle; unused in $\Psi_{\mathrm{vac}}$.
 
-## MAST Plasma current
+### MAST Plasma current
 
 - **`magnetics_plasma_current`** $(T_{\mathrm{mag}},)$, kA. Same Ampère integral as on DIII-D. Interpolate with `magnetics_time`.
 
-## MAST Coil geometry
+### MAST Coil geometry
 
 $C=812$; all angles $0$ — IMAS rectangles, no skew.
 
 Same column names as DIII-D. Join with `coil_input_column`. P2 $=20$ elements, P3 $=8$, P4 $=23$, P5 $=23$, P6 $=4$, solenoid $=656$.
 
-## MAST Thomson scattering
+### MAST Thomson scattering
 
 Same incoherent-TS physics as DIII-D. The laser is a **horizontal midplane** beam: **`thomson_chord_Z` $=0$** by construction. FAIR level-2 exposes only `thomson_scattering.channel[:].position.r`.
 
@@ -96,11 +96,11 @@ Same incoherent-TS physics as DIII-D. The laser is a **horizontal midplane** bea
 - **`thomson_edge_times`**, **`thomson_edge_Te`**, **`thomson_edge_ne`**, **`thomson_edge_spatial`**. Edge block is $R$ (typically $1.3$–$1.5\,\mathrm{m}$, 16 channels).
 - **`thomson_chord_name`**, **`thomson_chord_R`**, **`thomson_chord_Z`**.
 
-## MAST Withheld on test
+### MAST Withheld on test
 
 There is no MAST train config. `efit_psirz`, scalars, LCFS, and `magnetics_dsep` are absent from `mast_public_test`. MAST `magnetics_dsep` is **not** DIII-D `DSEP`: it is `esm/dr_sep_out`, upper/lower divertor balance $\delta R_{\mathrm{sep}}$. Its sign is not a diverted/limited flag.
 
-## MAST Parquet Data Format
+### MAST Parquet Data Format
 
 The [general Parquet layout](#parquet-data-format) is the same four families on both machines. This section details what is MAST-only about the files.
 
@@ -114,7 +114,7 @@ That is the public-test fleet you predict on. Magnetics clocks on those 1,206 ro
 
 ## DIII-D Data
 
-## DIII-D Introduction
+### DIII-D Introduction
 
 DIII-D is a conventional-aspect-ratio tokamak at General Atomics (San Diego): typical major radius $R_0\simeq 1.67\,\mathrm{m}$, minor radius $a\simeq 0.67\,\mathrm{m}$, vacuum $B_\varphi\lesssim 2.2\,\mathrm{T}$, plasma current $I_p\lesssim 2\,\mathrm{MA}$. The photograph is the vacuum vessel during a 2017 maintenance opening.
 
@@ -128,7 +128,7 @@ The poloidal cross-section is drawn from the official coil rectangles and Thomso
 
 *DIII-D $(R,Z)$ plane. Brown bar: ohmic solenoid `ECOILA`. Blue rectangles: shaping coils `F1A`–`F9B` (A upper, B lower). Orange contour: LCFS. Red points: core Thomson (vertical laser at $R\simeq 1.94\,\mathrm{m}$). Purple squares: tangential Thomson (near-constant $Z$). Green diamonds: divertor Thomson. `bcoil` has no poloidal rectangle — it is the out-of-plane toroidal field.*
 
-## DIII-D Coordinates and clocks
+### DIII-D Coordinates and clocks
 
 - **`efit_times`** $(T,)$, ms. The prediction clock. $T\in[3,444]$ on public test (train median $T=241$). All actuators and Thomson are interpolated to these instants. The series is not contiguous: limited frames were removed.
 - **`efit_grid_R`**, **`efit_grid_Z`** $(65,)$, m. Physical axes of the flux map. DIII-D box $R\in[0.84,2.54]$, $Z\in[-1.60,1.60]$. The discrete $\Delta^*$ and every Green function are evaluated on this mesh.
@@ -137,11 +137,11 @@ The poloidal cross-section is drawn from the official coil rectangles and Thomso
 
 The vacuum Green function and Grad–Shafranov operator are the shared recipe in the [Grad–Shafranov equation section](tokamak-theory.md#the-gradshafranov-equation). DIII-D ships **$C=19$** lumped rectangles. `bcoil` has no rectangle and is omitted from $\Psi_{\mathrm{vac}}$.
 
-## DIII-D Solenoid
+### DIII-D Solenoid
 
 - **`magnetics_ECOILA`** $(T_{\mathrm{mag}},)$, kA (not kA·turn). Current in the E-coil, the central solenoid at $R\simeq 0.723\,\mathrm{m}$, $Z=0$, height spanning the inner column. Faraday’s law: a changing solenoid flux $\Phi_{\mathrm{OH}}=\int B_Z\,dA$ induces the loop voltage $V_\ell=-d\Phi_{\mathrm{OH}}/dt$ that drives $I_p$ ohmically. EFIT’s machine file models the same group as 48 single-turn elements over $R\in[0.6875,0.7625]\,\mathrm{m}$, $Z\in[-1.7255,1.7255]\,\mathrm{m}$; the shipped row is one lumped rectangle of that envelope. `ECOILB` is a co-located group that is **not** shipped. Do not apply an ampere-turn multiplier.
 
-## DIII-D Poloidal coils
+### DIII-D Poloidal coils
 
 Eighteen F-coils, `magnetics_F{1–9}{A,B}` $(T_{\mathrm{mag}},)$, kA·turn (turns already folded in: 58 or 55). A = upper, B = lower. In-window peaks are typically within $\pm 200$; extremes reach $\sim\pm 580$. Centres from the shipped geometry:
 
@@ -159,7 +159,7 @@ Eighteen F-coils, `magnetics_F{1–9}{A,B}` $(T_{\mathrm{mag}},)$, kA·turn (tur
 
 `coil_angle1` / `coil_angle2` are EFIT’s `AF` / `AF2` shear angles in degrees. Both zero means an axis-aligned rectangle $(R\pm w/2,\,Z\pm h/2)$; EFIT treats $90^\circ$ as $0$. Non-zero angles shear the rectangle into a parallelogram. The vacuum $\psi$ of the set is linear in the currents: $\Psi_{\mathrm{vac}}=\sum_k (NI)_k\,G_k(R,Z)$.
 
-## DIII-D Toroidal field
+### DIII-D Toroidal field
 
 - **`magnetics_bcoil`** $(T_{\mathrm{mag}},)$, kA. Current in the toroidal-field (B) coils. These wrap the torus poloidally and have **no** `coil_*` rectangle. In vacuum,
 
@@ -169,7 +169,7 @@ $$
 
 so `bcoil` sets the vacuum $F$ (and therefore the vacuum $q$-scale). Inside the plasma $F=F(\psi)$ is a flux function fixed by Grad–Shafranov, not by this number alone.
 
-## DIII-D Plasma current
+### DIII-D Plasma current
 
 - **`magnetics_plasma_current`** $(T_{I_p},)$, kA. Total toroidal current
 
@@ -181,7 +181,7 @@ $$
 
 This is the one current that is dimensionally the same on both machines. It is **not** mixed into $\Psi_{\mathrm{vac}}$; it is the global Ampère constraint on the plasma’s own $j_\varphi$. Interpolate with `magnetics_plasma_current_times`, not `magnetics_time`.
 
-## DIII-D Coil geometry
+### DIII-D Coil geometry
 
 Shot-constant; $C=19$ lumped rectangles: 18 F-coils + `ECOILA`.
 
@@ -189,7 +189,7 @@ Shot-constant; $C=19$ lumped rectangles: 18 F-coils + `ECOILA`.
 - **`coil_R`**, **`coil_Z`**, **`coil_width`**, **`coil_height`** $(C,)$, m — centre and extents.
 - **`coil_angle1`**, **`coil_angle2`** $(C,)$, degrees — parallelogram skew; $0$ means a rectangle.
 
-## DIII-D Thomson scattering
+### DIII-D Thomson scattering
 
 A laser photon of wavelength $\lambda_i$ scatters off a free electron (classical Thomson cross-section $\sigma_T=\tfrac{8\pi}{3}r_e^2$, $r_e=e^2/(4\pi\varepsilon_0 m_e c^2)$). In the incoherent Maxwellian limit the scattered spectrum is Gaussian with width
 
@@ -205,11 +205,11 @@ Absolute intensity gives $n_e$; the width (and the detailed form factor) gives $
 - **`thomson_edge_times`**, **`thomson_edge_Te`**, **`thomson_edge_ne`**. The parquet “edge” block is the **tangential** system: **`thomson_edge_spatial`** is $Z$, nearly constant $\in[-0.09,-0.04]\,\mathrm{m}$; the informative coordinate is $R$.
 - **`thomson_chord_name`**, **`thomson_chord_R`**, **`thomson_chord_Z`** $(N,)$, $N\in[59,138]$. IMAS-style names `TS_core_*`, `TS_tangential_*`, `TS_divertor_*`. Positions vary by shot (22 layouts in train) because the divertor system was reconfigured. Do not cache one shot’s chords.
 
-## DIII-D Withheld on test
+### DIII-D Withheld on test
 
 Present in `diii_d_train` only: `efit_psirz` $(T,65,65)$; `efit_q95`, `efit_beta_n`, `efit_li`, `efit_r_axis`, `efit_z_axis`; `efit_lcfs_*`; `magnetics_dsep` (EFIT a-file `DSEP`, separatrix–limiter clearance; $>0$ on every shipped frame). Those are labels, not inputs. The three starter-kit demo rows are on [DIII-D Parquet Data Format](#diii-d-parquet-data-format).
 
-## DIII-D Parquet Data Format
+### DIII-D Parquet Data Format
 
 The [general Parquet layout](#parquet-data-format) is the same four families on both machines. This section details what is DIII-D-only about the files. Column names, clocks, and geometry are detailed in the other DIII-D subsections.
 

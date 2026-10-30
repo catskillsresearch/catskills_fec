@@ -1,6 +1,6 @@
 ## Tokamak Theory and Equilibrium Physics
 
-### Shape of a tokamak
+## Shape of a tokamak
 
 This competition uses two machines, DIII-D and MAST. Both are **tokamaks**.
 
@@ -330,7 +330,7 @@ The magnetic cage $\mathbf{B}$ cannot take an arbitrary shape: the field must be
 
 We establish the equation in five steps:
 
-## Step 1 — The track map
+### Step 1 — The track map
 
 The track map $\psi(R,Z)$ draws the nested loops. That fixes the two short-way pieces: they have to run *along* those loops.
 
@@ -364,7 +364,7 @@ $B_\varphi$ thins as $1/R$ on the wider side. Multiplying by $R$ cancels that, s
 
 *Left: the field $\psi(R,Z)$. The teal loop is one level set — two $R$, one $\psi$. Right: $F$ painted on the same slice; it does not change as you walk around a loop. Schematic $F$, not a fit.*
 
-## Step 2 — Curl: extras one way around the torus
+### Step 2 — Curl: extras one way around the torus
 
 Cut the doughnut. Pick a postage-stamp on that cut — a tiny patch at some $(R,Z)$. Bits stream through that stamp the **long way**: toward you, or away from you, along their helical tracks.
 
@@ -443,7 +443,7 @@ That redness is not packed tracks. How tightly the $\psi$ loops sit is $|\nabla\
 2. Extras around the doughnut are a fat wire. The wire writes the D and twists the rails into helices.
 3. The formula walks the edge of the stamp: $(B_R, B_Z)$ on the edge is extras through the middle. Step 4 plugs $B_R$ and $B_Z$ into that walk.
 
-## Step 3 — The constant $\mu_0$
+### Step 3 — The constant $\mu_0$
 
 In standard metric units (SI units), Ampère’s law is written:
 
@@ -465,7 +465,7 @@ Look at those units: newtons per ampere squared ($\mathrm{N\cdot A^{-2}}$). You 
 
 The number $4\pi\times 10^{-7}$ is an exact bookkeeping number built into the metric system. It is **not** a special property of our hot plasma cloud. It is simply the conversion number built into empty space itself. The plasma can heat up or cool down, changing its pressure $p$ and swirl $F$; but empty space never changes its conversion rate $\mu_0$.
 
-## Step 4 — Plug the $\mathbf{B}(\psi,F)$ recipe into that $\varphi$ curl
+### Step 4 — Plug the $\mathbf{B}(\psi,F)$ recipe into that $\varphi$ curl
 
 Recall: $R$ is distance from the doughnut hole, $Z$ is height, $\varphi$ is the long-way angle.
 Recall: $\psi(R,Z)$ is the track map (which onion layer you are on).
@@ -604,7 +604,7 @@ Look at how pretty this is:
 * The **left side** ($\Delta^*\psi$) measures: *"How curved are our magnetic onion-skin tracks?"*
 * The **right side** ($-\mu_0 R j_\varphi$) measures: *"How much electric current is marching the long way around the ring?"*, converted by $\mu_0$ and multiplied by $R$.
 
-## Step 5 — Force balance writes $j_\varphi$ from $p$ and $F$
+### Step 5 — Force balance writes $j_\varphi$ from $p$ and $F$
 
 Recall: $p=p(\psi)$ is the pressure on each track, and $F=F(\psi)$ is the long-way swirl $R B_\varphi$.
 Recall from Step 4: the short-way field is $B_R=-(1/R)\partial\psi/\partial Z$, $B_Z=(1/R)\partial\psi/\partial R$.
