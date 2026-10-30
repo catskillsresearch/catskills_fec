@@ -1,0 +1,6 @@
+{
+  "z_lo": -0.6,
+  "z_hi": 0.8,
+  "n_bins": 32,
+  "note": "Forensic only: mistaken narrow hardcode behind Codabench 1003664 / 178dc841"
+}

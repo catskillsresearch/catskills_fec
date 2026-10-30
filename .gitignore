@@ -31,6 +31,12 @@ data/
 *.pth
 *.npz
 !fusion_scoring/masks/*.npz
+# Phase-3 package: keep checksums / freezes / manifest in git; .pt may be symlinks or LFS
+!weights/phase3/SHA256SUMS
+!weights/phase3/MANIFEST.md
+!weights/phase3/zgrid.json
+!weights/phase3/zgrid_legacy_1003664.json
+!weights/phase3/stage_weights.sh
 *.parquet
 *.h5
 *.hdf5

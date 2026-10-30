@@ -1,0 +1,13 @@
+{
+  "z_lo": -1.2,
+  "z_hi": 1.2,
+  "n_bins": 32,
+  "efit_half_m": 1.6,
+  "half_m": 1.2,
+  "efit_fraction": 0.75,
+  "train_split": "/media/catskills/CRC_FUSION_LAB/fusion-equilibrium-challenge/datasets/Sophelio__fusion-equilibrium-challenge/data/diii_d_train",
+  "n_shots_scanned": 7041,
+  "source": "efit_grid_Z",
+  "rule": "thomson_zgrid_equals_0.75_of_efit_z_halfwidth",
+  "fingerprint": "b2b8d82802f9ddcd"
+}

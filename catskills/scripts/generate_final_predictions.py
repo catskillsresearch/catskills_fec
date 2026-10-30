@@ -102,13 +102,24 @@ S_BETA = 1.078508
 
 
 def _get_artifact(stem: str) -> Path:
-    p = artifacts_dir() / f"{stem}.pt"
-    if p.is_file():
-        return p
-    archive_p = lab_root() / "archive" / "artifacts" / f"{stem}.pt"
-    if archive_p.is_file():
-        return archive_p
-    raise FileNotFoundError(f"Missing artifact: {stem}.pt in {artifacts_dir()} or {archive_p.parent}")
+    """Resolve a Phase-2/3 checkpoint.
+
+    Search order: ``CRC_FEQ_WEIGHTS_DIR`` (repro overlay), ``CRC_FEQ_SHIPPED_WEIGHTS_DIR``,
+    repo ``weights/phase3/``, lab ``artifacts/``, then ``archive/artifacts/``.
+    """
+    name = f"{stem}.pt"
+    candidates: list[Path] = []
+    for key in ("CRC_FEQ_WEIGHTS_DIR", "CRC_FEQ_SHIPPED_WEIGHTS_DIR"):
+        env = os.environ.get(key, "").strip()
+        if env:
+            candidates.append(Path(env) / name)
+    candidates.append(ROOT / "weights" / "phase3" / name)
+    candidates.append(artifacts_dir() / name)
+    candidates.append(lab_root() / "archive" / "artifacts" / name)
+    for p in candidates:
+        if p.is_file():
+            return p
+    raise FileNotFoundError(f"Missing artifact: {name}; searched {[str(c) for c in candidates]}")
 
 
 def _shift_psi(psi: np.ndarray, z_index: np.ndarray) -> np.ndarray:

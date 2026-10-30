@@ -19,9 +19,16 @@ EFIT_SCALAR_LABELS = [
     "efit_beta_n", "efit_li", "efit_q95", "efit_r_axis", "efit_z_axis", "magnetics_dsep",
 ]
 
-# Physical spatial grid for Thomson scattering Z-grid interpolation
-ZGRID_LO, ZGRID_HI, ZGRID_N = -0.60, +0.80, 32
+# Default Thomson Z-grid (Dev thz-compatible). Prefer Phase-3 freeze via
+# ``catskills.zgrid_discover`` → CRC_FEQ_ZGRID_{LO,HI,N} over these constants.
+ZGRID_LO, ZGRID_HI, ZGRID_N = -1.20, +1.20, 32
 RGRID_LO, RGRID_HI, RGRID_N = 1.90, 2.35, 32
+
+
+def _active_zgrid() -> tuple[float, float, int]:
+    from catskills.zgrid_discover import active_zgrid
+
+    return active_zgrid(default_lo=ZGRID_LO, default_hi=ZGRID_HI, default_n=ZGRID_N)
 
 
 def mag_window_ms() -> float | None:
@@ -290,7 +297,8 @@ def interpolate_thomson_thzr(shot: dict) -> np.ndarray | None:
     names = np.asarray(names).astype(str)
     z_all = np.asarray(z_all, dtype=np.float64)
     r_all = np.asarray(r_all, dtype=np.float64)
-    zc = np.linspace(ZGRID_LO, ZGRID_HI, ZGRID_N)
+    z_lo, z_hi, n_z = _active_zgrid()
+    zc = np.linspace(z_lo, z_hi, n_z)
     rc = np.linspace(RGRID_LO, RGRID_HI, RGRID_N)
     cols: list[np.ndarray] = []
     cols.extend(_interp_system_onto_axis(
@@ -303,9 +311,19 @@ def interpolate_thomson_thzr(shot: dict) -> np.ndarray | None:
 
 
 def interpolate_thomson_zgrid(
-    shot: dict, n_bins: int = ZGRID_N, z_lo: float = ZGRID_LO, z_hi: float = ZGRID_HI,
+    shot: dict,
+    n_bins: int | None = None,
+    z_lo: float | None = None,
+    z_hi: float | None = None,
 ) -> np.ndarray | None:
-    """Te/ne on a fixed Z grid."""
+    """Te/ne on a fixed Z grid (Phase-3 freeze via env, else module defaults)."""
+    a_lo, a_hi, a_n = _active_zgrid()
+    if z_lo is None:
+        z_lo = a_lo
+    if z_hi is None:
+        z_hi = a_hi
+    if n_bins is None:
+        n_bins = a_n
     efit_times = np.asarray(shot["efit_times"], dtype=np.float64)
     chords = shot.get("thomson_chords") or {}
     names = chords.get("name")
@@ -314,7 +332,8 @@ def interpolate_thomson_zgrid(
         return None
     names = np.asarray(names).astype(str)
     z_all = np.asarray(z_all, dtype=np.float64)
-    zc = np.linspace(z_lo, z_hi, n_bins)
+    n_bins = int(n_bins)
+    zc = np.linspace(float(z_lo), float(z_hi), n_bins)
     cols: list[np.ndarray] = []
     for system_key, prefix in (("thomson_core", "TS_core"), ("thomson_edge", "TS_edge")):
         system = shot.get(system_key)
@@ -397,6 +416,8 @@ def features_from_shot(
         layout = (thomson_layout or shot.get("thomson_layout") or "").strip().lower()
         if layout in ("thzr",):
             th = interpolate_thomson_thzr(shot)
+        elif layout in ("zgrid", "thz"):
+            th = interpolate_thomson_zgrid(shot)
         else:
             th = interpolate_thomson_to_efit(shot)
         if th is not None:

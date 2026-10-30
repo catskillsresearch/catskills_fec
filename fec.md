@@ -32,6 +32,7 @@
   - [Organizer Reproduction Audit (Top 5 Rebuild)](#organizer-reproduction-audit-top-5-rebuild)
   - [Machine-Specific Retraining Architecture](#machine-specific-retraining-architecture)
   - [Turnkey Rebuild Execution (`reproduce.sh`)](#turnkey-rebuild-execution-reproducesh)
+- [Phase 3: Reproduce](#phase-3-reproduce)
 - [References](references.md)
 - [Appendix: 3rd Party Software](appendix-software.md)
 
@@ -95,54 +96,47 @@ To prevent ungrounded claims, data contamination, or non-reproducible artifacts,
 
 ### Machine-Specific Retraining Architecture
 
-Because the two machines operate under fundamentally different physical and data regimes, their retraining paths are cleanly decoupled:
+Phase-2 Final (and Phase-3 rebuild) uses **two machine-specific models**:
 
-#### 1. DIII-D Retraining (Supervised Neural Physics Pipeline)
-- **Input Data**: 1.59 million training frames across all 6,961 shots in `diii_d_train`.
-- **Architecture**: Multi-Head Residual MLP (`MultiHeadResMLP`) with 64-dimensional diagnostic magnetics and Thomson inputs, predicting 24 spatial modal current coefficients $c_k(t)$ and profile readouts ($q_{95}, \beta_N$).
-- **PDE Response**: Plasma flux $\psi_{\mathrm{plasma}}$ evaluated via discrete Biot–Savart elliptic Green operator $P \in \mathbb{R}^{4225 \times 3969}$ ($\Delta^* \psi = -\mu_0 R j_\varphi$).
-- **Dynamic Wall Eddies**: 40-feature dynamic Ridge regression matrix $W_{\mathrm{eddy\_dyn40}}$ ($\alpha = 500.0$) modeling vessel $L/R$ skin currents and polarity-aware coil response.
-- **Compute Footprint**: ~25 minutes wall-clock on an RTX 5060 Ti (~10 minutes on A100), occupying 13.0 GB VRAM. Well within the 24 GPU-hour limit.
+#### 1. DIII-D — Charcoal / O1G neural ensemble
+- Supervised charcoal PINN / O1G geometry-aware members trained on official `diii_d_train`.
+- Six-member flux ensemble + clean-Ip scalar heads; inference via `catskills.scripts.generate_final_predictions`.
+- **Thomson ZGRID**: discovered once from the train split’s `efit_grid_Z` (half-width × 0.75, 32 bins), frozen in `zgrid.json`, then used for train + private infer. Do not re-estimate from `private_test`.
+- Compute: see `COMPUTE.md` (charcoal ladder within the 24 GPU-h A100 ceiling).
 
-#### 2. MAST Model (Zero-Shot Analytic Physics Forward Solver)
-- **Nature of Model**: Pure physics-informed One-Shot Forward (OSF) solver. Contains **zero neural network weights**, zero backpropagation, and consumes **0 GPU-hours** (< 2 minutes CPU time).
-- **Frozen Hyperparameters**: The 24 physical constants (`tuning.md`, `osf/mast_12_osf_0_0_12.py`) derived during Phase 1 are treated as **frozen static hyperparameters** of the model definition:
-  - *Shafranov vertical-field balance*: $\lambda_{V0} = 1.80$, $\lambda_{Vb} = -1.00$.
-  - *Vessel $L/R$ eddy shielding* ($\tau_v \approx 20\,\mathrm{ms}$): $\lambda_{S0} = 0.50$, $\lambda_{Sb} = 0.10$.
-  - *Ampère enclosed current fractions*: $k_0 = 0.70$, $k_w = 0.30$, $k_b = 0.15$, $k_d = 0.20$.
-  - *CAD limiter boundaries*: $a_b = 0.42\,\mathrm{m}$, $a_d = 0.18\,\mathrm{m}$.
-  - *Divertor approach gate & Thomson walk*: $\zeta_q = 2.00$, $\eta_\beta = 0.20$ (sensitivity gradients validated $\le 0$).
-  - *Paramagnetic pitch integral factor*: $c^* = 1.0622$ (analytic vertex of spherical tokamak internal field amplification).
-- **Rule 3 Offline Compliance**: During the Final Phase rebuild, the MAST solver operates completely offline with zero live Codabench API calls or leaderboard probe dependencies. The constants are fixed in code, guaranteeing 100% deterministic reproducibility.
+#### 2. MAST — M9 flux + OSF analytic scalars
+- ψ from the M9 win50 ensemble (`CRC_FEQ_mast_M9_win50_i{101,202,303}`).
+- q95 / βN from OSF `osf_0_0_12` with frozen calibrations $c^*=1.062242$, $s^*=1.078508$ (CPU-only; 0 GPU-h).
+- Rule 3: zero FAIR-MAST EFIT++ / envelope-mask priors (see `PROVENANCE.md`).
 
 ---
 
 ### Turnkey Rebuild Execution (`reproduce.sh`)
 
-For complete end-to-end transparency, the entire rebuild from raw inputs to verified submission archives is encapsulated in a single top-level entrypoint:
-
 ```bash
-#!/usr/bin/env bash
-# ==============================================================================
-# reproduce.sh — End-to-end retrain and prediction reproduction script
-# ==============================================================================
-set -euo pipefail
-
-echo "=== 1. Retraining DIII-D Multi-Head ResMLP Model ==="
-python train_fleet_full.py --epochs 100
-
-echo "=== 2. Fitting Polarity-Aware Dynamic Wall Eddy Matrix ==="
-python fit_dynamic_weddy.py
-
-echo "=== 3. Resolving MAST Electrodynamic Closures & Physics Constants ==="
-python catskills/derive_constants.py --skip-submits
-
-echo "=== 4. Generating Calibrated Predictions for Both Machines ==="
-python export_calibrated_osf_mast.py --out-dir ./reproduced_output
-
-echo "=== 5. Running Official Schema & Consistency Validation ==="
-python validate_submission.py ./reproduced_output/diii_d_public_test.npz --config diii_d_public_test
-python validate_submission.py ./reproduced_output/mast_public_test.npz --config mast_public_test
-
-echo "=== Rebuild Successful: All predictions bit-identical and validated ==="
+./reproduce.sh --weights-only          # shipped .pt + zgrid → private_test npz
+./reproduce.sh --train                 # discover ZGRID → charcoal train → infer
+./reproduce.sh --dry-run               # smoke (2 shots)
+./reproduce.sh --legacy-zgrid-1003664  # forensic ZGRID for Codabench 1003664
 ```
+
+Full organizer instructions: [`REPRODUCE.md`](REPRODUCE.md). Provenance: [`PROVENANCE.md`](PROVENANCE.md). Compute: [`COMPUTE.md`](COMPUTE.md).
+
+---
+
+## Phase 3: Reproduce
+
+| Phase | Name | Role |
+|---|---|---|
+| 1 | Development | Public fold / Codabench Dev |
+| 2 | Final | Blind private fold (award scores) |
+| 3 | **Reproduce** | Organizer rebuild / internal review (`final.tt`) |
+
+**Deadline:** 31 October 2026 23:59 CDT.  
+**Packages required for:** Codabench **1003664** and **EM-catskills-3** (`9db5e666…`).
+
+**Tolerances:** retrain composite $S$ within **0.01** of submitted; shipped weights within **1e-4**.
+
+**Post-hoc package rule:** Phase-3 docs and entrypoints may be finalized after Phase-2 submit; HF prediction blobs are not rewritten — regenerate from Final inputs + weights / retrain.
+
+Standing rebuild path matches **9db5e666** (train-discovered ZGRID freeze equivalent to Dev ±1.2). Submission **1003664** used a mistaken narrow ZGRID (−0.6…+0.8); use `--legacy-zgrid-1003664` only for forensics.
