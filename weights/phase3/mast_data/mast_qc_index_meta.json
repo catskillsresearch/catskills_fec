@@ -1,0 +1,14 @@
+{
+  "n_keep": 3622,
+  "n_train": 3655,
+  "seed": 42,
+  "thresholds": {
+    "maxabs_median": 0.5496694445610046,
+    "maxabs_mad": 0.2431046962738037,
+    "maxabs_k": 10.0,
+    "maxabs_hi": 2.9807164072990417,
+    "min_frames": 2,
+    "n_fit": 3655
+  },
+  "note": "M9 --qc train uses this keep list (3622). Full index.json with quarantine also needed for rebuild; ship keep list + thresholds here."
+}

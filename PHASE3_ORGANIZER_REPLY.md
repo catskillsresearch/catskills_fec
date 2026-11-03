@@ -22,14 +22,16 @@ Please find our Phase 3 (Reproduce) package for the two Final submissions you li
 Public GitHub Release (pinned source + trained weights):
 
 - Release: https://github.com/catskillsresearch/catskills_fec/releases/tag/phase3-reproduce-03becd2  
-- Commit: `03becd27c531906281cf8310a49f8b33a4d8a282`  
+- Reproduce archive commit: `03becd27c531906281cf8310a49f8b33a4d8a282`  
 - Archive: `phase3-reproduce-03becd2.tar.gz`  
-- SHA-256: `500f76d4e82acfc476f0aece384ec99c46f3ac5a6563021ca8e02ea41f2dbf7d`
+- SHA-256: `500f76d4e82acfc476f0aece384ec99c46f3ac5a6563021ca8e02ea41f2dbf7d`  
+- Methods / report commit (current `main`): `7d9ce3b7e0c37ba1ac2881d3ad545fb980e9ee77`
 
-Long-form methods document (assembled from the `fec.md` wiki: OSF + MAST/DIII-D calibration + DIII-D ML fit + Phase 2/3):  
-`docs/FEC.pdf` in the release / repository (`python3 scripts/build_fec_pdf.py`).
+**Final methods report (PDF):** `docs/FEC.pdf`  
+Assembled from the `fec.md` wiki (OSF + MAST/DIII-D calibration + DIII-D ML fit + Phase 2/3). Rebuild with `python3 scripts/build_fec_pdf.py`. On GitHub at commit `7d9ce3b7…`:  
+https://github.com/catskillsresearch/catskills_fec/blob/7d9ce3b7e0c37ba1ac2881d3ad545fb980e9ee77/docs/FEC.pdf
 
-Contents include model source, `environment.yml` / requirements, trained weights under `weights/phase3/` with `SHA256SUMS`, training entrypoint (`./reproduce.sh --train`), inference entrypoint (`./reproduce.sh --weights-only` → `generate_final_predictions`), `PROVENANCE.md`, and `COMPUTE.md`.
+Contents of the reproduce archive include model source, `environment.yml` / requirements, trained weights under `weights/phase3/` with `SHA256SUMS`, training entrypoint (`./reproduce.sh --train`), inference entrypoint (`./reproduce.sh --weights-only` → `generate_final_predictions`), `PROVENANCE.md`, and `COMPUTE.md`.
 
 The archive is **self-contained** (real `.pt` files under `weights/phase3/`). No lab NAS / Fusion drive is required. Default outputs land in `benchmarks/CRC_FEQ_phase3/reproduce_<stamp>/` inside the extracted tree (`weight_diff.html`, `repro_weights/`, prediction `.npz`). Short how-to: `REPRODUCE.md`.
 
@@ -52,9 +54,7 @@ Submission **1003664** was produced under a mistaken narrow ZGRID (−0.6…+0.8
 ./reproduce.sh --train --train-dir /path/to/diii_d_train
 ```
 
-Details: `docs/FEC.pdf` (long) and `REPRODUCE.md` (short). Compute budget: `COMPUTE.md` (≤24 GPU-h A100-class; OSF is CPU-only).
-
-We are happy to arrange a private hand-over if preferred before results are announced.
+Details: `docs/FEC.pdf` (final methods report) and `REPRODUCE.md` (short). Compute budget: `COMPUTE.md` (≤24 GPU-h A100-class; OSF is CPU-only).
 
 Best regards,  
 Catskills Research Company (`catskills`)

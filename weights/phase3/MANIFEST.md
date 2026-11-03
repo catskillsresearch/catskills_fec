@@ -38,3 +38,13 @@ If `.pt` files are symlinks to the lab archive, materialize before shipping an o
 ```bash
 ./weights/phase3/stage_weights.sh --copy
 ```
+
+## Parent for brown TF_LS rebuild
+
+| Stem | Role |
+|---|---|
+| `CRC_FEQ_olive_O1_dualctx` | Warm start for `psi_tailfit --parent O1` → LS_O1_{101,W1} |
+
+## MAST rebuild sidecars
+
+See `weights/phase3/mast_data/` (`mast_pool3.txt`, `mast_qc_*`). Lab commits: `lab_training_commits.bundle`.

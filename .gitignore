@@ -37,6 +37,9 @@ data/
 !weights/phase3/zgrid.json
 !weights/phase3/zgrid_legacy_1003664.json
 !weights/phase3/stage_weights.sh
+!weights/phase3/lab_training_commits.bundle
+!weights/phase3/mast_data/
+!weights/phase3/mast_data/**
 *.parquet
 *.h5
 *.hdf5
@@ -84,6 +87,7 @@ tests/
 /scripts/*
 !/scripts/build_fec_pdf.py
 !/scripts/tex_preamble_fec.tex
+!/scripts/phase3_rebuild_all_d3d.sh
 catskills/probes/
 catskills/*.md
 !catskills/COLOR_LEDGER.md
