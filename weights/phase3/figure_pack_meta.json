@@ -1,0 +1,154 @@
+{
+  "checkpoint": "/home/catskills/Desktop/catskills_fec/weights/phase3/CRC_FEQ_olive_O1_dualctx.pt",
+  "n_figure_shots": 3,
+  "holdout_keys": [
+    "d3d_shot_ea67ad907d",
+    "d3d_shot_c965ecee3a",
+    "d3d_shot_bc0f6ecd42"
+  ],
+  "split": {
+    "n_train": 6961,
+    "n_eval": 80,
+    "seed": 42
+  },
+  "shots": [
+    {
+      "shot_index": 0,
+      "cache_key": "d3d_shot_ea67ad907d",
+      "label": "CRC_FEQ_olive_O1_dualctx_h00",
+      "input_figures": {
+        "coils_Ip_ECOILA": "figures/shot_00/coils_Ip_ECOILA.png",
+        "thomson_core_Te_input": "figures/shot_00/thomson_core_Te_input.png",
+        "thomson_tan_Te_input": "figures/shot_00/thomson_tan_Te_input.png",
+        "dsep_input": "figures/shot_00/dsep_input.png",
+        "efit_context_inputs": "figures/shot_00/efit_context_inputs.png"
+      },
+      "output_figures": {
+        "flux_mid": "figures/shot_00/flux_mid_gt_pred_diff.png",
+        "flux_peakerr": "figures/shot_00/flux_peakerr_gt_pred_diff.png",
+        "predicted_q95": "figures/shot_00/predicted_q95_gt_pred_diff.png",
+        "predicted_betaN": "figures/shot_00/predicted_betaN_gt_pred_diff.png"
+      },
+      "commentary": [
+        "Flux MSE is low (2.69e-05) \u2014 pixel-level agreement looks strong on this shot.",
+        "Error is fairly balanced between edge and core (ratio 1.40).",
+        "Amplitude scale factor \u2248 1.006 \u2014 overall gain looks reasonable.",
+        "Largest |Diff| at mid-time near R=2.54 m, Z=-0.45 m (|err|=0.00932).",
+        "q95: RMSE=0.189 vs EFIT \u2014 the side-model that predicts this submitted number (separate from the 65\u00d765 flux path) is missing the target; that hurts the 0.15 weight on $R^2_{q95,\u03b2N}$ in $S$.",
+        "betaN: RMSE=0.0456 vs EFIT \u2014 the side-model that predicts this submitted number (separate from the 65\u00d765 flux path) is missing the target; that hurts the 0.15 weight on $R^2_{q95,\u03b2N}$ in $S$."
+      ],
+      "flux_quality": {
+        "mse": 2.686618161433302e-05,
+        "mae": 0.003819818966551084,
+        "rel_l2": 0.03762936182412361,
+        "gt_var": 0.018900982026155567,
+        "edge_core_mae_ratio": 1.400231137257704,
+        "amplitude_scale": 1.0058865588691217,
+        "hotspot": {
+          "iZ": 23,
+          "iR": 64,
+          "R_m": 2.5399999618530273,
+          "Z_m": -0.45000001788139343,
+          "abs_err": 0.009318739175796509
+        },
+        "T": 229
+      },
+      "scalar_quality": {
+        "rmse_q95": 0.18908114732256942,
+        "rmse_betaN": 0.04556451807570723
+      }
+    },
+    {
+      "shot_index": 1,
+      "cache_key": "d3d_shot_c965ecee3a",
+      "label": "CRC_FEQ_olive_O1_dualctx_h01",
+      "input_figures": {
+        "coils_Ip_ECOILA": "figures/shot_01/coils_Ip_ECOILA.png",
+        "thomson_core_Te_input": "figures/shot_01/thomson_core_Te_input.png",
+        "thomson_tan_Te_input": "figures/shot_01/thomson_tan_Te_input.png",
+        "dsep_input": "figures/shot_01/dsep_input.png",
+        "efit_context_inputs": "figures/shot_01/efit_context_inputs.png"
+      },
+      "output_figures": {
+        "flux_mid": "figures/shot_01/flux_mid_gt_pred_diff.png",
+        "flux_peakerr": "figures/shot_01/flux_peakerr_gt_pred_diff.png",
+        "predicted_q95": "figures/shot_01/predicted_q95_gt_pred_diff.png",
+        "predicted_betaN": "figures/shot_01/predicted_betaN_gt_pred_diff.png"
+      },
+      "commentary": [
+        "Flux MSE is low (4.74e-05) \u2014 pixel-level agreement looks strong on this shot.",
+        "Error is fairly balanced between edge and core (ratio 0.87).",
+        "Amplitude scale factor \u2248 0.983 \u2014 overall gain looks reasonable.",
+        "Largest |Diff| at mid-time near R=2.54 m, Z=0.50 m (|err|=0.00871).",
+        "q95: RMSE=0.185 vs EFIT \u2014 the side-model that predicts this submitted number (separate from the 65\u00d765 flux path) is missing the target; that hurts the 0.15 weight on $R^2_{q95,\u03b2N}$ in $S$.",
+        "betaN: RMSE=0.0562 vs EFIT \u2014 the side-model that predicts this submitted number (separate from the flux-map path) matches well on this shot."
+      ],
+      "flux_quality": {
+        "mse": 4.7403089433689885e-05,
+        "mae": 0.005501124284929891,
+        "rel_l2": 0.04082127768815398,
+        "gt_var": 0.00931921643170273,
+        "edge_core_mae_ratio": 0.8672118869643867,
+        "amplitude_scale": 0.9832251373786781,
+        "hotspot": {
+          "iZ": 42,
+          "iR": 64,
+          "R_m": 2.5399999618530273,
+          "Z_m": 0.5,
+          "abs_err": 0.008709073066711426
+        },
+        "T": 143
+      },
+      "scalar_quality": {
+        "rmse_q95": 0.18452194773789524,
+        "rmse_betaN": 0.0561536120396316
+      }
+    },
+    {
+      "shot_index": 2,
+      "cache_key": "d3d_shot_bc0f6ecd42",
+      "label": "CRC_FEQ_olive_O1_dualctx_h02",
+      "input_figures": {
+        "coils_Ip_ECOILA": "figures/shot_02/coils_Ip_ECOILA.png",
+        "thomson_core_Te_input": "figures/shot_02/thomson_core_Te_input.png",
+        "thomson_tan_Te_input": "figures/shot_02/thomson_tan_Te_input.png",
+        "dsep_input": "figures/shot_02/dsep_input.png",
+        "efit_context_inputs": "figures/shot_02/efit_context_inputs.png"
+      },
+      "output_figures": {
+        "flux_mid": "figures/shot_02/flux_mid_gt_pred_diff.png",
+        "flux_peakerr": "figures/shot_02/flux_peakerr_gt_pred_diff.png",
+        "predicted_q95": "figures/shot_02/predicted_q95_gt_pred_diff.png",
+        "predicted_betaN": "figures/shot_02/predicted_betaN_gt_pred_diff.png"
+      },
+      "commentary": [
+        "Flux MSE is low (3.10e-04) \u2014 pixel-level agreement looks strong on this shot.",
+        "Error is core-weighted (edge/core MAE ratio 0.68) \u2014 axis / peaking may be off more than the boundary.",
+        "Amplitude scale factor \u2248 0.992 \u2014 overall gain looks reasonable.",
+        "Largest |Diff| at mid-time near R=2.27 m, Z=-0.05 m (|err|=0.0468).",
+        "q95: RMSE=0.264 vs EFIT \u2014 the side-model that predicts this submitted number (separate from the 65\u00d765 flux path) is missing the target; that hurts the 0.15 weight on $R^2_{q95,\u03b2N}$ in $S$.",
+        "betaN: RMSE=0.0661 vs EFIT \u2014 the side-model that predicts this submitted number (separate from the flux-map path) matches well on this shot."
+      ],
+      "flux_quality": {
+        "mse": 0.0003096830265772957,
+        "mae": 0.01386846167017929,
+        "rel_l2": 0.07684819364672497,
+        "gt_var": 0.0513757479264617,
+        "edge_core_mae_ratio": 0.676555248708526,
+        "amplitude_scale": 0.9918006580325804,
+        "hotspot": {
+          "iZ": 31,
+          "iR": 54,
+          "R_m": 2.2743749618530273,
+          "Z_m": -0.05000000074505806,
+          "abs_err": 0.04679873026907444
+        },
+        "T": 196
+      },
+      "scalar_quality": {
+        "rmse_q95": 0.2643653804450578,
+        "rmse_betaN": 0.06608610839288113
+      }
+    }
+  ]
+}
