@@ -9,7 +9,12 @@ Dear organizers,
 
 Thank you for the careful check. You are right: `./reproduce.sh --train` as shipped in `phase3-reproduce-03becd2` only rebuilds a **subset** of the DIII-D charcoal ladder (control / place / early@2048) and then falls back to shipped weights for the rest of the ensemble. Below are the exact rebuild recipes, the ensemble/dZ policy, the lab commits, and the MAST training data.
 
-We are packaging these into a new tagged commit on `catskills_fec` (`scripts/phase3_rebuild_all_d3d.sh`, the missing `o1g_*` / `build_grand_features` / `psi_tailfit` entrypoints, MAST shot/QC lists under `weights/phase3/mast_data/`, and a git bundle of the lab commits). Until that tag lands, this email is the authority.
+**Pinned delivery (already on `main`):**
+
+- Commit: `6dc3637dad1ee5e6e08c4ee17c520255a0baae6a`  
+- Release tag: https://github.com/catskillsresearch/catskills_fec/releases/tag/phase3-rebuild-6dc3637  
+
+That commit adds `scripts/phase3_rebuild_all_d3d.sh`, the missing `o1g_*` / `build_grand_features` entrypoints, MAST shot/QC lists under `weights/phase3/mast_data/`, and `weights/phase3/lab_training_commits.bundle`. (`psi_tailfit` was already in-tree; the rebuild script calls it.)
 
 ---
 
@@ -75,8 +80,9 @@ python -m catskills.scripts.o1_geom_train early --batch 2048   # → O1G_early_b
 These are **psi_tailfit** fine-tunes of parent Olive O1 (`CRC_FEQ_olive_O1_dualctx`), not O1G:
 
 ```bash
-# Requires CRC_FEQ_olive_O1_dualctx.pt (shipped under weights/phase3/ in the follow-up tag;
-# Olive dualctx stack at lab commit 65cfe77). Place it in artifacts/ or CRC_FEQ_WEIGHTS_DIR.
+# Requires CRC_FEQ_olive_O1_dualctx.pt (Olive dualctx at lab commit 65cfe77).
+# Not in the git tree (*.pt gitignored); place under artifacts/ or CRC_FEQ_WEIGHTS_DIR
+# via weights/phase3/stage_weights.sh from the lab archive, or ask us for that file.
 python -m catskills.scripts.psi_tailfit --parent O1 --power 0.0 --seed 101 \
   --tag LS_O1_101 --epochs 220 --patience 30
 # → CRC_FEQ_brown_TF_LS_O1_101.pt
@@ -121,12 +127,11 @@ Those SHAs are **not** on `catskills_fec` history; they are from the lab working
 
 **`03becd27` does not bit-reproduce those historical trains**; it is the Phase-3 packaging commit (reproduce entrypoints + shipped weights). Training *recipes* above match the checkpoint `training_params` and the lab scripts at those commits.
 
-We are shipping `weights/phase3/lab_training_commits.bundle` so you can:
+`weights/phase3/lab_training_commits.bundle` on commit `6dc3637` contains those seven refs:
 
 ```bash
 git clone <empty> lab_tree && cd lab_tree
-git bundle unbundle /path/to/lab_training_commits.bundle
-# or: git fetch lab_training_commits.bundle 'refs/heads/lab/*:refs/heads/lab/*'
+git fetch /path/to/lab_training_commits.bundle 'refs/heads/lab/*:refs/heads/lab/*'
 ```
 
 ---
@@ -135,7 +140,7 @@ git bundle unbundle /path/to/lab_training_commits.bundle
 
 ### 4.1 Shot list / QC → 3 622 train shots
 
-Shipped under `weights/phase3/mast_data/`:
+On commit `6dc3637` under `weights/phase3/mast_data/`:
 
 - `mast_pool3.txt` — 3 738 FAIR-MAST shot ids present in our `fair_mast_train` (space-separated; replaces `/tmp/mast_pool3.txt`)
 - `mast_qc_keep.txt` / `mast_qc_v1_index.json` — QC keep list (**3 622** keys) + thresholds
@@ -152,7 +157,6 @@ Shipped under `weights/phase3/mast_data/`:
 ### 4.2 Building `fair_mast_train`
 
 ```bash
-# Pool file (now in the package):
 export POOL=weights/phase3/mast_data/mast_pool3.txt
 # Ingest from public FAIR-MAST S3 (CC BY-SA 4.0); challenge schema + efit_psirz for offline QC only
 python -m catskills.scripts.mast_ingest --pool "$POOL" --start 0 --shots 4000 \
@@ -166,14 +170,13 @@ python -m catskills.scripts.phase3_train_mast_m9 --weights-dir weights/phase3
 
 ---
 
-## 5. What we will tag next
+## 5. What is on `6dc3637` / `phase3-rebuild-6dc3637`
 
-1. `scripts/phase3_rebuild_all_d3d.sh` + ported `o1g_*` / `build_grand_features` / `psi_tailfit`.  
+1. `scripts/phase3_rebuild_all_d3d.sh` + ported `o1g_*` / `build_grand_features` (and existing `psi_tailfit`).  
 2. `weights/phase3/mast_data/{mast_pool3.txt,mast_qc_*}`.  
-3. `lab_training_commits.bundle`.  
-4. Wire `reproduce.sh --train` to call the full DIII-D rebuild (or document `--train-full`).
+3. `weights/phase3/lab_training_commits.bundle`.  
 
-Weights-only replay (`./reproduce.sh --weights-only`) remains the path that matches submitted S within 1e-4; from-scratch is the recipes above.
+Note: `./reproduce.sh --train` is still the short charcoal ladder + M9 path; the **full** DIII-D ensemble rebuild is `scripts/phase3_rebuild_all_d3d.sh` (documented above). Weights-only replay (`./reproduce.sh --weights-only`) remains the path that matches submitted S within 1e-4.
 
 Best regards,  
 Catskills Research Company (`catskills`)
