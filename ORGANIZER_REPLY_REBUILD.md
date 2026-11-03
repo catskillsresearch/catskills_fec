@@ -12,9 +12,14 @@ Thank you for the careful check. You are right: `./reproduce.sh --train` as ship
 **Pinned delivery (already on `main`):**
 
 - Commit: `6dc3637dad1ee5e6e08c4ee17c520255a0baae6a`  
-- Release tag: https://github.com/catskillsresearch/catskills_fec/releases/tag/phase3-rebuild-6dc3637  
+- Release: https://github.com/catskillsresearch/catskills_fec/releases/tag/phase3-rebuild-6dc3637  
 
 That commit adds `scripts/phase3_rebuild_all_d3d.sh`, the missing `o1g_*` / `build_grand_features` entrypoints, MAST shot/QC lists under `weights/phase3/mast_data/`, and `weights/phase3/lab_training_commits.bundle`. (`psi_tailfit` was already in-tree; the rebuild script calls it.)
+
+**Release asset (brown parent weight):**  
+https://github.com/catskillsresearch/catskills_fec/releases/download/phase3-rebuild-6dc3637/CRC_FEQ_olive_O1_dualctx.pt  
+
+Place under `artifacts/` or `CRC_FEQ_WEIGHTS_DIR` for `psi_tailfit --parent O1`.
 
 ---
 
@@ -81,8 +86,8 @@ These are **psi_tailfit** fine-tunes of parent Olive O1 (`CRC_FEQ_olive_O1_dualc
 
 ```bash
 # Requires CRC_FEQ_olive_O1_dualctx.pt (Olive dualctx at lab commit 65cfe77).
-# Not in the git tree (*.pt gitignored); place under artifacts/ or CRC_FEQ_WEIGHTS_DIR
-# via weights/phase3/stage_weights.sh from the lab archive, or ask us for that file.
+# Download from the release Assets on phase3-rebuild-6dc3637; place under
+# artifacts/ or CRC_FEQ_WEIGHTS_DIR.
 python -m catskills.scripts.psi_tailfit --parent O1 --power 0.0 --seed 101 \
   --tag LS_O1_101 --epochs 220 --patience 30
 # → CRC_FEQ_brown_TF_LS_O1_101.pt
@@ -175,6 +180,7 @@ python -m catskills.scripts.phase3_train_mast_m9 --weights-dir weights/phase3
 1. `scripts/phase3_rebuild_all_d3d.sh` + ported `o1g_*` / `build_grand_features` (and existing `psi_tailfit`).  
 2. `weights/phase3/mast_data/{mast_pool3.txt,mast_qc_*}`.  
 3. `weights/phase3/lab_training_commits.bundle`.  
+4. Release asset `CRC_FEQ_olive_O1_dualctx.pt` (brown `psi_tailfit` parent).  
 
 Note: `./reproduce.sh --train` is still the short charcoal ladder + M9 path; the **full** DIII-D ensemble rebuild is `scripts/phase3_rebuild_all_d3d.sh` (documented above). Weights-only replay (`./reproduce.sh --weights-only`) remains the path that matches submitted S within 1e-4.
 
