@@ -4,7 +4,7 @@ Thank you for the careful check. You are right: `./reproduce.sh --train` as ship
 
 **Pinned delivery (already on `main`):**
 
-- Commit: `f384fed3a82e2fdf5858b7573dcd1f5521876784` (warp_coeff_cache port; rebuild recipes from `907d045…`)  
+- Commit: `8c63e5113c20f333e1743c11ecd75c82b18f622f` (warp_coeff_cache port; rebuild recipes from `907d045…`)  
 - Release: https://github.com/catskillsresearch/catskills_fec/releases/tag/phase3-rebuild-6dc3637  
 
 That tree adds `scripts/phase3_rebuild_all_d3d.sh`, the missing `o1g_*` / `build_grand_features` / `warp_coeff_cache` entrypoints, MAST shot/QC lists under `weights/phase3/mast_data/`, and `weights/phase3/lab_training_commits.bundle`. (`psi_tailfit` was already in-tree; the rebuild script calls it.)
@@ -102,7 +102,7 @@ python -m catskills.scripts.psi_tailfit --parent O1 --power 0.0 --seed 42 \
 
 Receipts: `results/brown/P30_TAILFIT_LS_O1_{101,W1}.json`.
 
-**Warp cache settings (historical house run / what W1 expects):** `--keys train` = `sample_cache_keys(7080, seed=42)[80:]` (6,961 shots), PCA \(k=60\), `include_thomson=True`, output `results/brown/warp_basis/<key>.npz` with array `B` shape `(60, 5)`. Modules: `catskills/warp_coeff.py`, `catskills/scripts/warp_coeff_cache.py` (missing at `907d045`; on `main` as of `f384fed`). Prebuilt tree: release asset `warp_basis_train_seed42.tar.gz`.
+**Warp cache settings (historical house run / what W1 expects):** `--keys train` = `sample_cache_keys(7080, seed=42)[80:]` (6,961 shots), PCA \(k=60\), `include_thomson=True`, output `results/brown/warp_basis/<key>.npz` with array `B` shape `(60, 5)`. Modules: `catskills/warp_coeff.py`, `catskills/scripts/warp_coeff_cache.py` (missing at `907d045`; on `main` as of `8c63e51`). Prebuilt tree: release asset `warp_basis_train_seed42.tar.gz`.
 
 ---
 
@@ -137,7 +137,7 @@ Those SHAs are **not** on `catskills_fec` history; they are from the lab working
 
 **`03becd27` does not bit-reproduce those historical trains**; it is the Phase-3 packaging commit (reproduce entrypoints + shipped weights). Training *recipes* above match the checkpoint `training_params` and the lab scripts at those commits.
 
-`weights/phase3/lab_training_commits.bundle` on commit `f384fed` contains those seven refs:
+`weights/phase3/lab_training_commits.bundle` on commit `8c63e51` contains those seven refs:
 
 ```bash
 git clone <empty> lab_tree && cd lab_tree
@@ -150,7 +150,7 @@ git fetch /path/to/lab_training_commits.bundle 'refs/heads/lab/*:refs/heads/lab/
 
 ### 4.1 Shot list / QC → 3 622 train shots
 
-On commit `f384fed` under `weights/phase3/mast_data/`:
+On commit `8c63e51` under `weights/phase3/mast_data/`:
 
 - `mast_pool3.txt` — 3 738 FAIR-MAST shot ids present in our `fair_mast_train` (space-separated; replaces `/tmp/mast_pool3.txt`)
 - `mast_qc_keep.txt` / `mast_qc_v1_index.json` — QC keep list (**3 622** keys) + thresholds
@@ -180,7 +180,7 @@ python -m catskills.scripts.phase3_train_mast_m9 --weights-dir weights/phase3
 
 ---
 
-## 5. What is on `f384fed` / `phase3-rebuild-6dc3637`
+## 5. What is on `8c63e51` / `phase3-rebuild-6dc3637`
 
 1. `scripts/phase3_rebuild_all_d3d.sh` + ported `o1g_*` / `build_grand_features` / `warp_coeff_cache` (and existing `psi_tailfit`).  
 2. `weights/phase3/mast_data/{mast_pool3.txt,mast_qc_*}`.  

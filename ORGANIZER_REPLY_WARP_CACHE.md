@@ -9,10 +9,10 @@ Hi Ganatma,
 
 You are right: at `907d045`, `psi_tailfit.py` names `warp_coeff_cache` and reads `results/brown/warp_basis/<key>.npz`, but the builder was not in that tree. Sorry — that was an omission in the rebuild packaging.
 
-**Fix on `main`:** `f384fed3a82e2fdf5858b7573dcd1f5521876784`  
-https://github.com/catskillsresearch/catskills_fec/commit/f384fed3a82e2fdf5858b7573dcd1f5521876784  
+**Pinned on `main`:** `8c63e5113c20f333e1743c11ecd75c82b18f622f`  
+https://github.com/catskillsresearch/catskills_fec/commit/8c63e5113c20f333e1743c11ecd75c82b18f622f  
 
-That commit adds `catskills/warp_coeff.py` + `catskills/scripts/warp_coeff_cache.py`, and updates `scripts/phase3_rebuild_all_d3d.sh` to `mkdir` `results/brown`, run `maroon_m0_cache`, and run `warp_coeff_cache` before `LS_O1_W1`.
+That tip includes the warp_coeff port (`f384fed`: `catskills/warp_coeff.py`, `catskills/scripts/warp_coeff_cache.py`, and `scripts/phase3_rebuild_all_d3d.sh` updates for `mkdir results/brown`, `maroon_m0_cache`, and `warp_coeff_cache` before `LS_O1_W1`) plus this reply and the longer rebuild guide.
 
 **Prebuilt warp cache (same release as the Olive O1 parent):**
 
@@ -38,7 +38,7 @@ Then W1 is unchanged:
 
 **Longer rebuild guide (standing reference on `main`):**  
 [`ORGANIZER_REPLY_REBUILD.md`](https://github.com/catskillsresearch/catskills_fec/blob/main/ORGANIZER_REPLY_REBUILD.md)  
-— full DIII-D member recipes, ensemble/dZ policy, lab commits, MAST data, and the release asset list (Olive `.pt` / report PDF / this warp tarball). Use with code at `f384fed` or later.
+— full DIII-D member recipes, ensemble/dZ policy, lab commits, MAST data, and the release asset list (Olive `.pt` / report PDF / this warp tarball). Use with code at `8c63e51` or later.
 
 Thanks,  
 Lars
