@@ -85,7 +85,9 @@ def build(keys, bundle, label, n_raw):
     # A bundle's features are NOT interchangeable across families: the cache key must
     # carry the layout and widths or one parent silently reads another's features (S30.8).
     fam = f"{bundle.thomson_layout or 'th1'}_{n_raw}_{len(bundle.feature_mean)}"
-    cache = results_dir() / "brown" / f"tailfit_{label}_{fam}"
+    brown = results_dir() / "brown"
+    brown.mkdir(parents=True, exist_ok=True)
+    cache = brown / f"tailfit_{label}_{fam}"
     if (cache.with_suffix(".npz")).is_file():
         d = np.load(cache.with_suffix(".npz"))
         if d["X"].shape[1] == len(bundle.feature_mean):
@@ -332,7 +334,9 @@ def main() -> int:
            "parent_holdout_mse": parent_hm,
            "pair_mse": pair_mse, "best_epoch": best["ep"],
            "val": best["val"]}
-    (results_dir() / "brown" / f"P30_TAILFIT_{args.tag}.json").write_text(json.dumps(out, indent=2))
+    brown = results_dir() / "brown"
+    brown.mkdir(parents=True, exist_ok=True)
+    (brown / f"P30_TAILFIT_{args.tag}.json").write_text(json.dumps(out, indent=2))
     torch.save({**torch.load(ck, map_location="cpu", weights_only=False),
                 "model_state": best["state"]},
                artifacts_dir() / f"CRC_FEQ_brown_TF_{args.tag}.pt")

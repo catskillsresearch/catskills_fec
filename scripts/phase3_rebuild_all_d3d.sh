@@ -19,7 +19,11 @@ export CRC_FEQ_MODEL_ID="${CRC_FEQ_MODEL_ID:-CRC_FEQ_olive_geom}"
 export CRC_FEQ_THOMSON_LAYOUT=zgrid
 export PYTORCH_CUDA_ALLOC_CONF="${PYTORCH_CUDA_ALLOC_CONF:-expandable_segments:True}"
 
-echo "=== 0. Feature caches: thz + ipshift + grand(169) ==="
+echo "=== 0. Lab dirs + PCA coeff basis (maroon M0) + feature caches ==="
+# psi_tailfit / warp_coeff_cache write under results/brown/
+mkdir -p "${CATSKILLS_FUSION_LAB:-/media/catskills/CRC_FUSION_LAB/fusion-equilibrium-challenge}/results/brown"
+# Coefficient PCA basis (coeffs_v1) required by warp_coeff_cache and charcoal trains:
+$PY -m catskills.scripts.maroon_m0_cache
 # Base thz cache is built by charcoal/warm path on first train.
 # Corrected-Ip cache (149):
 $PY -m catskills.scripts.o1g_clean_train train  # builds *_thz_ipshift.npz then trains scratch
@@ -46,6 +50,9 @@ echo "=== 4. Brown TF_LS_O1_{101,W1} via psi_tailfit on parent O1 ==="
 # If missing, rebuild Olive O1 first (historical: CRC_FEQ_MODEL_ID=CRC_FEQ_olive dualctx stack).
 $PY -m catskills.scripts.psi_tailfit --parent O1 --power 0.0 --seed 101 \
   --tag LS_O1_101 --epochs 220 --patience 30
+# W1 needs GT warp bases (S34.12 Arm A). Defaults: --keys train --workers 12
+# on sample_cache_keys(7080, seed=42)[80:], k=60, include_thomson=True.
+$PY -m catskills.scripts.warp_coeff_cache --keys train --workers 12
 $PY -m catskills.scripts.psi_tailfit --parent O1 --power 0.0 --seed 42 \
   --lambda-w 1 --tag LS_O1_W1 --epochs 220 --patience 30
 
