@@ -4,17 +4,19 @@ Thank you for the careful check. You are right: `./reproduce.sh --train` as ship
 
 **Pinned delivery (already on `main`):**
 
-- Commit: `907d04576678b27231da7ad838e656c06a764547`  
+- Commit: `f384fed3a82e2fdf5858b7573dcd1f5521876784` (warp_coeff_cache port; rebuild recipes from `907d045…`)  
 - Release: https://github.com/catskillsresearch/catskills_fec/releases/tag/phase3-rebuild-6dc3637  
 
-That tree adds `scripts/phase3_rebuild_all_d3d.sh`, the missing `o1g_*` / `build_grand_features` entrypoints, MAST shot/QC lists under `weights/phase3/mast_data/`, and `weights/phase3/lab_training_commits.bundle`. (`psi_tailfit` was already in-tree; the rebuild script calls it.)
+That tree adds `scripts/phase3_rebuild_all_d3d.sh`, the missing `o1g_*` / `build_grand_features` / `warp_coeff_cache` entrypoints, MAST shot/QC lists under `weights/phase3/mast_data/`, and `weights/phase3/lab_training_commits.bundle`. (`psi_tailfit` was already in-tree; the rebuild script calls it.)
 
-**Release assets (Olive O1 parent):**
+**Release assets:**
 
-- Weight: https://github.com/catskillsresearch/catskills_fec/releases/download/phase3-rebuild-6dc3637/CRC_FEQ_olive_O1_dualctx.pt  
-- Benchmark report (PDF): https://github.com/catskillsresearch/catskills_fec/releases/download/phase3-rebuild-6dc3637/REPORT_CRC_FEQ_olive_O1_dualctx.pdf  
+- Olive O1 weight: https://github.com/catskillsresearch/catskills_fec/releases/download/phase3-rebuild-6dc3637/CRC_FEQ_olive_O1_dualctx.pt  
+- Olive O1 benchmark report (PDF): https://github.com/catskillsresearch/catskills_fec/releases/download/phase3-rebuild-6dc3637/REPORT_CRC_FEQ_olive_O1_dualctx.pdf  
+- Warp basis cache (for `LS_O1_W1`): https://github.com/catskillsresearch/catskills_fec/releases/download/phase3-rebuild-6dc3637/warp_basis_train_seed42.tar.gz  
+- Warp basis README: https://github.com/catskillsresearch/catskills_fec/releases/download/phase3-rebuild-6dc3637/README_warp_basis.txt  
 
-Place the `.pt` under `artifacts/` or `CRC_FEQ_WEIGHTS_DIR` for `psi_tailfit --parent O1`. The PDF is the standalone holdout benchmark report for that parent (scores, training table, 3-shot figure pack).
+Place the `.pt` under `artifacts/` or `CRC_FEQ_WEIGHTS_DIR` for `psi_tailfit --parent O1`. The PDF is the standalone holdout benchmark report for that parent (scores, training table, 3-shot figure pack). Extract the warp tarball into the lab root so paths are `results/brown/warp_basis/<key>.npz` (or rebuild with `warp_coeff_cache`; see §1.5).
 
 ---
 
@@ -89,6 +91,9 @@ python -m catskills.scripts.psi_tailfit --parent O1 --power 0.0 --seed 101 \
 # → CRC_FEQ_brown_TF_LS_O1_101.pt
 
 # W1 only: GT warp bases under results/brown/warp_basis/<key>.npz
+# Option A — release tarball (~9 MB, 6961 shots):
+#   tar -xzf warp_basis_train_seed42.tar.gz -C "$CATSKILLS_FUSION_LAB"
+# Option B — rebuild (needs maroon_m0 / coeffs_v1):
 python -m catskills.scripts.warp_coeff_cache --keys train --workers 12
 python -m catskills.scripts.psi_tailfit --parent O1 --power 0.0 --seed 42 \
   --lambda-w 1 --tag LS_O1_W1 --epochs 220 --patience 30
@@ -97,7 +102,7 @@ python -m catskills.scripts.psi_tailfit --parent O1 --power 0.0 --seed 42 \
 
 Receipts: `results/brown/P30_TAILFIT_LS_O1_{101,W1}.json`.
 
-**Warp cache settings (historical house run / what W1 expects):** `--keys train` = `sample_cache_keys(7080, seed=42)[80:]` (6,961 shots), PCA \(k=60\), `include_thomson=True`, output `results/brown/warp_basis/<key>.npz` with array `B` shape `(60, 5)`. Modules: `catskills/warp_coeff.py`, `catskills/scripts/warp_coeff_cache.py` (were missing from `907d045`; ported after your report).
+**Warp cache settings (historical house run / what W1 expects):** `--keys train` = `sample_cache_keys(7080, seed=42)[80:]` (6,961 shots), PCA \(k=60\), `include_thomson=True`, output `results/brown/warp_basis/<key>.npz` with array `B` shape `(60, 5)`. Modules: `catskills/warp_coeff.py`, `catskills/scripts/warp_coeff_cache.py` (missing at `907d045`; on `main` as of `f384fed`). Prebuilt tree: release asset `warp_basis_train_seed42.tar.gz`.
 
 ---
 
@@ -132,7 +137,7 @@ Those SHAs are **not** on `catskills_fec` history; they are from the lab working
 
 **`03becd27` does not bit-reproduce those historical trains**; it is the Phase-3 packaging commit (reproduce entrypoints + shipped weights). Training *recipes* above match the checkpoint `training_params` and the lab scripts at those commits.
 
-`weights/phase3/lab_training_commits.bundle` on commit `907d045` contains those seven refs:
+`weights/phase3/lab_training_commits.bundle` on commit `f384fed` contains those seven refs:
 
 ```bash
 git clone <empty> lab_tree && cd lab_tree
@@ -145,7 +150,7 @@ git fetch /path/to/lab_training_commits.bundle 'refs/heads/lab/*:refs/heads/lab/
 
 ### 4.1 Shot list / QC → 3 622 train shots
 
-On commit `907d045` under `weights/phase3/mast_data/`:
+On commit `f384fed` under `weights/phase3/mast_data/`:
 
 - `mast_pool3.txt` — 3 738 FAIR-MAST shot ids present in our `fair_mast_train` (space-separated; replaces `/tmp/mast_pool3.txt`)
 - `mast_qc_keep.txt` / `mast_qc_v1_index.json` — QC keep list (**3 622** keys) + thresholds
@@ -175,12 +180,12 @@ python -m catskills.scripts.phase3_train_mast_m9 --weights-dir weights/phase3
 
 ---
 
-## 5. What is on `907d045` / `phase3-rebuild-6dc3637`
+## 5. What is on `f384fed` / `phase3-rebuild-6dc3637`
 
-1. `scripts/phase3_rebuild_all_d3d.sh` + ported `o1g_*` / `build_grand_features` (and existing `psi_tailfit`).  
+1. `scripts/phase3_rebuild_all_d3d.sh` + ported `o1g_*` / `build_grand_features` / `warp_coeff_cache` (and existing `psi_tailfit`).  
 2. `weights/phase3/mast_data/{mast_pool3.txt,mast_qc_*}`.  
 3. `weights/phase3/lab_training_commits.bundle`.  
-4. Release assets: `CRC_FEQ_olive_O1_dualctx.pt` (brown `psi_tailfit` parent) and `REPORT_CRC_FEQ_olive_O1_dualctx.pdf` (benchmark report for that weight).  
+4. Release assets: `CRC_FEQ_olive_O1_dualctx.pt`, `REPORT_CRC_FEQ_olive_O1_dualctx.pdf`, `warp_basis_train_seed42.tar.gz` (+ `README_warp_basis.txt`).  
 
 Note: `./reproduce.sh --train` is still the short charcoal ladder + M9 path; the **full** DIII-D ensemble rebuild is `scripts/phase3_rebuild_all_d3d.sh` (documented above). Weights-only replay (`./reproduce.sh --weights-only`) remains the path that matches submitted S within 1e-4.
 
